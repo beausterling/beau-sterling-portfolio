@@ -1,4 +1,3 @@
-
 import ProjectCard from './ProjectCard';
 
 const Projects = () => {
@@ -8,7 +7,7 @@ const Projects = () => {
       description: "A messaging analysis platform, that helps users understand their communication patterns and improve digital relationships across different channels. It includes a free demo on the home page and paid reports. The next phase will be a MacOS desktop app.",
       image: "/lovable-uploads/3b170fdd-53d9-4427-ae77-525fda6f775b.png",
       technologies: ["Vite", "TypeScript", "React", "TailwindCSS", "OpenAI", "Supabase"],
-      liveDemoUrl: "#",
+      liveDemoUrl: "https://vibecheckit.com/",
       githubUrl: "#",
     },
     {
