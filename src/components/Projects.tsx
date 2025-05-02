@@ -6,7 +6,7 @@ const Projects = () => {
     {
       title: "VibeCheck-It",
       description: "A mood tracking application that helps users monitor their emotional well-being over time. Includes data visualization, mood patterns, and insights to help users understand their emotional trends.",
-      image: "https://images.unsplash.com/photo-1600267204091-5c1ab8b10c02?q=80&w=1000&auto=format&fit=crop",
+      image: "/lovable-uploads/3b170fdd-53d9-4427-ae77-525fda6f775b.png",
       technologies: ["React", "TypeScript", "Chart.js", "TailwindCSS", "Firebase"],
       liveDemoUrl: "#",
       githubUrl: "#",
