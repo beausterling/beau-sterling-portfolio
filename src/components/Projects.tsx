@@ -25,7 +25,7 @@ const Projects = () => {
       description: "A wellness application that syncs users' self-care routines with lunar cycles. This app is not fully developed yet, but will take users birth data, generate complete astrological human design profiles, and use that data to inform a highly personalized life coach and relationship advisor.",
       image: "/lovable-uploads/cb80639d-ec36-4ec6-b58f-0b6ab2fece1e.png",
       technologies: ["React Native", "Node.js", "Supabase"],
-      liveDemoUrl: "#",
+      liveDemoUrl: "https://moonrhythms.io/",
       githubUrl: "#",
     },
   ];
