@@ -23,7 +23,7 @@ const Projects = () => {
     {
       title: "Moon Rhythms",
       description: "A wellness application that syncs users' self-care routines with lunar cycles. This app is not fully developed yet, but will take users birth data, generate complete astrological human design profiles, and use that data to inform a highly personalized life coach and relationship advisor.",
-      image: "https://images.unsplash.com/photo-1532767153582-b1a0e5145009?q=80&w=1000&auto=format&fit=crop",
+      image: "/lovable-uploads/cb80639d-ec36-4ec6-b58f-0b6ab2fece1e.png",
       technologies: ["React Native", "Node.js", "Supabase"],
       liveDemoUrl: "#",
       githubUrl: "#",
