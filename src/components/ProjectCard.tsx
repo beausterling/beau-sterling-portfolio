@@ -28,9 +28,9 @@ const ProjectCard = ({
     )}>
       {/* Project Image */}
       <div className="w-full md:w-1/2">
-        <div className="rounded-lg overflow-hidden border border-gray-800 shadow-xl transition-transform hover:scale-[1.02] duration-300 relative">
-          {/* Neon border effect using pseudo-element */}
-          <div className="absolute inset-0 rounded-lg -m-0.5 shadow-[0_0_10px_2px_rgba(61,245,132,0.5)] border-2 border-neon pointer-events-none"></div>
+        <div className="rounded-lg overflow-hidden border border-gray-800 shadow-xl transition-all duration-300 hover:scale-[1.02] relative group">
+          {/* Neon border effect using pseudo-element - only visible on hover */}
+          <div className="absolute inset-0 rounded-lg -m-0.5 opacity-0 group-hover:opacity-100 shadow-[0_0_15px_3px_rgba(61,245,132,0.6)] border-2 border-neon pointer-events-none transition-opacity duration-300"></div>
           
           <img 
             src={image} 
