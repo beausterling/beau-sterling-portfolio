@@ -27,9 +27,18 @@ const ProjectCard = ({
 }: ProjectCardProps) => {
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   
+  // Check if the URL is from Loom
+  const isLoomVideo = liveDemoUrl?.includes('loom.com');
+  
   const handleImageClick = () => {
     if (isVideo && liveDemoUrl) {
-      setVideoDialogOpen(true);
+      // For Loom videos, open in new tab
+      if (isLoomVideo) {
+        window.open(liveDemoUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        // For other videos, show dialog
+        setVideoDialogOpen(true);
+      }
     } else if (liveDemoUrl) {
       window.open(liveDemoUrl, '_blank', 'noopener,noreferrer');
     }
@@ -38,7 +47,13 @@ const ProjectCard = ({
   const handleDemoClick = (e: React.MouseEvent) => {
     if (isVideo) {
       e.preventDefault();
-      setVideoDialogOpen(true);
+      // For Loom videos, open in new tab
+      if (isLoomVideo) {
+        window.open(liveDemoUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        // For other videos, show dialog
+        setVideoDialogOpen(true);
+      }
     }
   };
 
@@ -100,7 +115,7 @@ const ProjectCard = ({
                   href={liveDemoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={isVideo ? handleDemoClick : undefined}
+                  onClick={isVideo && !isLoomVideo ? handleDemoClick : undefined}
                   className="flex items-center gap-2 text-sm text-gray-300 hover:text-neon transition-colors"
                 >
                   <ExternalLink size={16} />
@@ -124,12 +139,12 @@ const ProjectCard = ({
         </div>
       </div>
 
-      {/* Video Dialog */}
+      {/* Video Dialog - only for non-Loom videos */}
       <Dialog open={videoDialogOpen} onOpenChange={setVideoDialogOpen}>
         <DialogContent className="max-w-4xl bg-dark-secondary border-gray-800">
           <div className="aspect-video w-full">
             <iframe 
-              src={isVideo ? liveDemoUrl : ""}
+              src={isVideo && !isLoomVideo ? liveDemoUrl : ""}
               frameBorder="0" 
               allowFullScreen
               className="w-full h-full"
