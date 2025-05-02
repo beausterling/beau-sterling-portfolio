@@ -14,7 +14,7 @@ const Projects = () => {
     {
       title: "Sales Maxing",
       description: "An AI-powered sales analytics platform that helps small businesses optimize their sales processes. Features include customer segmentation, sales forecasting, and actionable insights.",
-      image: "https://images.unsplash.com/photo-1579389083078-4e7018379f7e?q=80&w=1000&auto=format&fit=crop",
+      image: "/lovable-uploads/cbf30c20-d99b-4e9f-be19-822329622344.png",
       technologies: ["React", "TypeScript", "Supabase"],
       liveDemoUrl: "#",
       githubUrl: "#",
