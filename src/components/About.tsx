@@ -22,7 +22,7 @@ const About = () => {
           {/* About Me Content */}
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              <span className="text-white">About</span> <span className="text-neon text-glow">Me</span>
+              <span className="text-neon text-glow">About</span> <span className="text-neon text-glow">Me</span>
             </h2>
             
             <div className="space-y-4 text-gray-300">
@@ -43,7 +43,7 @@ const About = () => {
           {/* Skills */}
           <div>
             <h3 className="text-2xl font-bold mb-6 lg:text-center">
-              My <span className="text-neon text-glow">Skills</span>
+              My <span className="text-white">Skills</span>
             </h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
