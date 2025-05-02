@@ -5,10 +5,10 @@ const About = () => {
   const skills = [
     { name: "Frontend Development", icon: <Code className="text-neon" size={24} /> },
     { name: "UI/UX Design", icon: <LayoutGrid className="text-neon" size={24} /> },
-    { name: "Mobile App Development", icon: <Layers className="text-neon" size={24} /> },
+    { name: "Automation Workflows", icon: <Layers className="text-neon" size={24} /> },
     { name: "AI Integration", icon: <Cpu className="text-neon" size={24} /> },
     { name: "Data Visualization", icon: <LineChart className="text-neon" size={24} /> },
-    { name: "MVP Development", icon: <Rocket className="text-neon" size={24} /> },
+    { name: "MVP Scope & Launch", icon: <Rocket className="text-neon" size={24} /> },
   ];
 
   return (
