@@ -4,15 +4,15 @@ const Projects = () => {
   const projects = [
     {
       title: "VibeCheck-It",
-      description: "A messaging analysis platform, that helps users understand their communication patterns and improve digital relationships across different channels. It includes a free demo on the home page and paid reports. The next phase will be a MacOS desktop app.",
+      description: "A messaging analysis platform, that helps users understand their communication patterns and improve digital relationships across different channels. It includes a free demo on the home page and paid reports. The next phase will be a MacOS desktop app that integrates with iMessage and other messaging platforms.",
       image: "/lovable-uploads/3b170fdd-53d9-4427-ae77-525fda6f775b.png",
       technologies: ["Vite", "TypeScript", "React", "TailwindCSS", "OpenAI", "Supabase"],
-      liveDemoUrl: "https://vibecheckit.com/",
+      liveDemoUrl: "#",
       githubUrl: "#",
     },
     {
       title: "Sales-Maxing",
-      description: "An AI-powered sales analytics platform that helps small businesses optimize their sales processes. Features include customer segmentation, sales forecasting, and actionable insights.",
+      description: "An AI-powered sales analytics platform that helps small businesses optimize their sales processes. The main feature is a call interface that records your conversation with the client or prospect, transcribes the audio, sends the conversation to Anthropic for analysis, and gets back a detailed feedback summary within seconds. The MVP for this was created for a 24-hour hackathon competition.",
       image: "/lovable-uploads/cbf30c20-d99b-4e9f-be19-822329622344.png",
       technologies: ["React", "TypeScript", "ElevenLabs", "Anthropic", "Supabase"],
       liveDemoUrl: "#",
@@ -20,7 +20,7 @@ const Projects = () => {
     },
     {
       title: "Moon Rhythms",
-      description: "A wellness application that syncs users' self-care routines with lunar cycles. Includes personalized recommendations, calendar integrations, and community features.",
+      description: "A wellness application that syncs users' self-care routines with lunar cycles. This app is not fully developed yet, but will take users birth data, generate complete astrological human design profiles, and use that data to inform a highly personalized life coach and relationship advisor.",
       image: "https://images.unsplash.com/photo-1532767153582-b1a0e5145009?q=80&w=1000&auto=format&fit=crop",
       technologies: ["React Native", "Node.js", "Supabase"],
       liveDemoUrl: "#",
