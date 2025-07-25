@@ -4,6 +4,14 @@ import ProjectCard from './ProjectCard';
 const Projects = () => {
   const projects = [
     {
+      title: "MyFutrSelf",
+      description: "An AI Accountability app that allows users to talk to their future self who is designed to keep them accountable to their goals. The app creates personalized conversations with your future self to help maintain motivation and track progress towards your aspirations.",
+      image: "/lovable-uploads/myfutrself-preview.png",
+      technologies: ["React", "TypeScript", "AI/ML", "TailwindCSS", "OpenAI"],
+      liveDemoUrl: "https://myfutrself.com/",
+      githubUrl: "#",
+    },
+    {
       title: "VibeCheck-It",
       description: "A messaging analysis platform, that helps users understand their communication patterns and improve digital relationships across different channels. It includes a free demo on the home page and paid reports. The next phase will be a MacOS desktop app that integrates with iMessage and other messaging platforms.",
       image: "/lovable-uploads/3b170fdd-53d9-4427-ae77-525fda6f775b.png",
