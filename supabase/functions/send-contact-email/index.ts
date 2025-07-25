@@ -28,7 +28,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const emailResponse = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
-      to: ["your-email@example.com"], // Replace with your actual email
+      to: ["your-actual-email@domain.com"], // Replace with your actual email
       replyTo: email,
       subject: `New Contact Form Message from ${name}`,
       html: `
