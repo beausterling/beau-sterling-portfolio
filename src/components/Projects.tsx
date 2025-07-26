@@ -6,7 +6,7 @@ const Projects = () => {
     {
       title: "MyFutrSelf",
       description: "An AI Accountability app that allows users to talk to their future self who is designed to keep them accountable to their goals. The app creates personalized conversations with your future self to help maintain motivation and track progress towards your aspirations.",
-      image: "/lovable-uploads/a4ee5c8c-d7df-4b43-9431-c6fec17def85.png",
+      image: "/lovable-uploads/b83d40ad-af6e-4c22-9abf-96712d97b931.png",
       technologies: ["React", "TypeScript", "AI/ML", "TailwindCSS", "OpenAI"],
       liveDemoUrl: "https://myfutrself.com/",
       githubUrl: "#",
