@@ -6,16 +6,21 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface EmailData {
-  from: string;
-  to: string;
-  subject: string;
+interface CloudMailinData {
+  envelope: {
+    to: string;
+    from: string;
+  };
+  headers: {
+    Subject: string;
+  };
+  plain: string;
   html: string;
-  text: string;
-  attachments?: Array<{
-    filename: string;
+  attachments: Array<{
+    file_name: string;
     content: string;
-    contentType: string;
+    content_type: string;
+    size: number;
   }>;
 }
 
@@ -31,19 +36,19 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const emailData: EmailData = await req.json();
+    const cloudmailinData: CloudMailinData = await req.json();
     
-    console.log('Received email data:', {
-      from: emailData.from,
-      subject: emailData.subject,
-      hasAttachments: emailData.attachments?.length || 0
+    console.log('Received CloudMailin data:', {
+      from: cloudmailinData.envelope.from,
+      subject: cloudmailinData.headers.Subject,
+      hasAttachments: cloudmailinData.attachments?.length || 0
     });
 
     // Extract title from subject
-    const title = emailData.subject || 'Untitled Blog Post';
+    const title = cloudmailinData.headers.Subject || 'Untitled Blog Post';
     
-    // Use text content as primary, fall back to HTML without tags
-    let content = emailData.text || emailData.html?.replace(/<[^>]*>/g, '') || '';
+    // Use plain text content as primary, fall back to HTML without tags
+    let content = cloudmailinData.plain || cloudmailinData.html?.replace(/<[^>]*>/g, '') || '';
     
     // Clean up content
     content = content.trim();
@@ -52,9 +57,9 @@ const handler = async (req: Request): Promise<Response> => {
     let imageAlt = null;
 
     // Handle image attachments
-    if (emailData.attachments && emailData.attachments.length > 0) {
-      const imageAttachment = emailData.attachments.find(att => 
-        att.contentType.startsWith('image/')
+    if (cloudmailinData.attachments && cloudmailinData.attachments.length > 0) {
+      const imageAttachment = cloudmailinData.attachments.find(att => 
+        att.content_type.startsWith('image/')
       );
 
       if (imageAttachment) {
@@ -64,14 +69,14 @@ const handler = async (req: Request): Promise<Response> => {
           
           // Generate unique filename
           const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-          const extension = imageAttachment.filename.split('.').pop() || 'jpg';
+          const extension = imageAttachment.file_name.split('.').pop() || 'jpg';
           const filename = `${timestamp}.${extension}`;
 
           // Upload to Supabase Storage
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from('blog-images')
             .upload(filename, imageBuffer, {
-              contentType: imageAttachment.contentType,
+              contentType: imageAttachment.content_type,
               upsert: false
             });
 
@@ -83,7 +88,7 @@ const handler = async (req: Request): Promise<Response> => {
               .getPublicUrl(filename);
             
             imageUrl = publicUrl;
-            imageAlt = imageAttachment.filename;
+            imageAlt = imageAttachment.file_name;
             console.log('Image uploaded successfully:', publicUrl);
           }
         } catch (imageError) {
