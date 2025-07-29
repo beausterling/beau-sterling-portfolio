@@ -75,7 +75,7 @@ const Blog = () => {
           </div>
           <div className="max-w-4xl mx-auto space-y-8">
             {[1, 2, 3].map((i) => (
-              <Card key={i} className="bg-card border-border">
+              <Card key={i} className="bg-dark-secondary border-gray-800">
                 <CardHeader>
                   <Skeleton className="h-8 w-3/4" />
                   <Skeleton className="h-4 w-32" />
@@ -117,7 +117,7 @@ const Blog = () => {
           ) : (
             <div className="space-y-8">
               {posts.map((post) => (
-                <Card key={post.id} className="bg-card border-border hover:border-neon/50 transition-all duration-300">
+                <Card key={post.id} className="bg-dark-secondary border-gray-800 hover:border-neon/50 transition-all duration-300">
                   <CardHeader>
                     <CardTitle className="text-2xl font-bold text-glow">
                       <span className="bg-gradient-to-r from-neon to-neon-glow bg-clip-text text-transparent">
@@ -160,7 +160,7 @@ const Blog = () => {
                             </h3>
                           ),
                           p: ({ children }) => (
-                            <p className="text-foreground leading-relaxed">{children}</p>
+                            <p className="text-gray-300 leading-relaxed">{children}</p>
                           ),
                           code: ({ children }) => (
                             <code className="bg-muted px-2 py-1 rounded text-neon">
