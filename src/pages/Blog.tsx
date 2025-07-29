@@ -163,14 +163,23 @@ const Blog = () => {
                             <p className="text-gray-300 leading-relaxed">{children}</p>
                           ),
                           code: ({ children }) => (
-                            <code className="bg-muted px-2 py-1 rounded text-neon">
+                            <code className="bg-black px-2 py-1 rounded text-neon">
                               {children}
                             </code>
                           ),
                           pre: ({ children }) => (
-                            <pre className="bg-muted p-4 rounded-lg overflow-x-auto border border-border">
+                            <pre className="bg-black p-4 rounded-lg overflow-x-auto border border-gray-800">
                               {children}
                             </pre>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="text-gray-300 list-disc list-inside space-y-1">{children}</ul>
+                          ),
+                          ol: ({ children }) => (
+                            <ol className="text-gray-300 list-decimal list-inside space-y-1">{children}</ol>
+                          ),
+                          li: ({ children }) => (
+                            <li className="text-gray-300">{children}</li>
                           ),
                           blockquote: ({ children }) => (
                             <blockquote className="border-l-4 border-neon/50 pl-4 italic text-muted-foreground">
