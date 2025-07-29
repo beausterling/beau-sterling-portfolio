@@ -9,11 +9,56 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const securityHeaders = {
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "X-XSS-Protection": "1; mode=block",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+};
+
 interface ContactEmailRequest {
   name: string;
   email: string;
   message: string;
 }
+
+// Input validation and sanitization
+const validateContactInput = (data: any): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+
+  // Validate name
+  if (!data.name || typeof data.name !== 'string') {
+    errors.push('Name is required and must be a string');
+  } else if (data.name.trim().length < 1 || data.name.trim().length > 100) {
+    errors.push('Name must be between 1 and 100 characters');
+  }
+
+  // Validate email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!data.email || typeof data.email !== 'string') {
+    errors.push('Email is required and must be a string');
+  } else if (!emailRegex.test(data.email.trim())) {
+    errors.push('Email must be a valid email address');
+  }
+
+  // Validate message
+  if (!data.message || typeof data.message !== 'string') {
+    errors.push('Message is required and must be a string');
+  } else if (data.message.trim().length < 10 || data.message.trim().length > 5000) {
+    errors.push('Message must be between 10 and 5000 characters');
+  }
+
+  return { isValid: errors.length === 0, errors };
+};
+
+// Basic content sanitization
+const sanitizeContent = (content: string): string => {
+  return content
+    .trim()
+    .replace(/[<>]/g, '') // Remove potential HTML tags
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+\s*=/gi, ''); // Remove event handlers
+};
 
 // Clean notification email template for Beau
 const createNotificationEmail = (name: string, email: string, message: string) => `
@@ -112,13 +157,45 @@ const createConfirmationEmail = (name: string) => `
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: { ...corsHeaders, ...securityHeaders } });
+  }
+
+  // Only allow POST requests
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
+    });
   }
 
   try {
-    const { name, email, message }: ContactEmailRequest = await req.json();
+    // Parse and validate request body
+    let requestData;
+    try {
+      requestData = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
+      });
+    }
 
-    console.log("Sending contact emails for:", { name, email });
+    // Validate input
+    const validation = validateContactInput(requestData);
+    if (!validation.isValid) {
+      console.log("Validation failed:", validation.errors);
+      return new Response(JSON.stringify({ error: "Invalid input", details: validation.errors }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
+      });
+    }
+
+    // Sanitize inputs
+    const name = sanitizeContent(requestData.name);
+    const email = requestData.email.trim().toLowerCase();
+    const message = sanitizeContent(requestData.message);
+
+    console.log("Sending contact emails for:", { name, email: email.substring(0, 3) + "***" });
 
     // Send notification email to Beau
     const notificationResponse = await resend.emails.send({
@@ -146,15 +223,22 @@ const handler = async (req: Request): Promise<Response> => {
       headers: {
         "Content-Type": "application/json",
         ...corsHeaders,
+        ...securityHeaders,
       },
     });
   } catch (error: any) {
     console.error("Error sending contact emails:", error);
+    
+    // Don't expose internal error details in production
+    const errorMessage = error.message?.includes('rate limit') 
+      ? 'Rate limit exceeded. Please try again later.'
+      : 'Failed to send email. Please try again later.';
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
       }
     );
   }

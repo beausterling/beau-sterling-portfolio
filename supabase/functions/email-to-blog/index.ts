@@ -6,6 +6,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const securityHeaders = {
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "X-XSS-Protection": "1; mode=block",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+};
+
 interface CloudMailinData {
   envelope: {
     to: string;
@@ -24,10 +31,58 @@ interface CloudMailinData {
   }>;
 }
 
+// Content validation and sanitization
+const validateAndSanitizeContent = (content: string): string => {
+  if (!content || typeof content !== 'string') {
+    return '';
+  }
+
+  // Remove potentially dangerous content
+  return content
+    .trim()
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
+    .substring(0, 50000); // Limit content length
+};
+
+const validateAttachment = (attachment: any): boolean => {
+  if (!attachment || typeof attachment !== 'object') return false;
+  
+  // Validate file size (max 10MB)
+  if (attachment.size > 10 * 1024 * 1024) {
+    console.log('Attachment too large:', attachment.size);
+    return false;
+  }
+  
+  // Validate content type
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowedTypes.includes(attachment.content_type)) {
+    console.log('Invalid content type:', attachment.content_type);
+    return false;
+  }
+  
+  // Validate filename
+  if (!attachment.file_name || typeof attachment.file_name !== 'string') {
+    console.log('Invalid filename');
+    return false;
+  }
+  
+  return true;
+};
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: { ...corsHeaders, ...securityHeaders } });
+  }
+
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
+    });
   }
 
   try {
@@ -36,7 +91,15 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const cloudmailinData: CloudMailinData = await req.json();
+    let cloudmailinData: CloudMailinData;
+    try {
+      cloudmailinData = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
+      });
+    }
     
     console.log('Received CloudMailin data:', {
       from: cloudmailinData.envelope.from,
@@ -44,22 +107,29 @@ const handler = async (req: Request): Promise<Response> => {
       hasAttachments: cloudmailinData.attachments?.length || 0
     });
 
-    // Extract title from subject
-    const title = cloudmailinData.headers.Subject || 'Untitled Blog Post';
+    // Validate and sanitize title
+    let title = cloudmailinData.headers?.Subject || 'Untitled Blog Post';
+    title = validateAndSanitizeContent(title).substring(0, 200); // Limit title length
     
-    // Use plain text content as primary, fall back to HTML without tags
+    // Validate and sanitize content
     let content = cloudmailinData.plain || cloudmailinData.html?.replace(/<[^>]*>/g, '') || '';
-    
-    // Clean up content
-    content = content.trim();
+    content = validateAndSanitizeContent(content);
+
+    // Ensure minimum content length
+    if (content.length < 10) {
+      return new Response(JSON.stringify({ error: "Content too short" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
+      });
+    }
 
     let imageUrl = null;
     let imageAlt = null;
 
-    // Handle image attachments
+    // Handle image attachments with validation
     if (cloudmailinData.attachments && cloudmailinData.attachments.length > 0) {
       const imageAttachment = cloudmailinData.attachments.find(att => 
-        att.content_type.startsWith('image/')
+        att.content_type.startsWith('image/') && validateAttachment(att)
       );
 
       if (imageAttachment) {
@@ -67,10 +137,15 @@ const handler = async (req: Request): Promise<Response> => {
           // Decode base64 content
           const imageBuffer = Uint8Array.from(atob(imageAttachment.content), c => c.charCodeAt(0));
           
-          // Generate unique filename
+          // Generate secure filename
           const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-          const extension = imageAttachment.file_name.split('.').pop() || 'jpg';
-          const filename = `${timestamp}.${extension}`;
+          const extension = imageAttachment.file_name.split('.').pop()?.toLowerCase() || 'jpg';
+          
+          // Sanitize extension
+          const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+          const safeExtension = allowedExtensions.includes(extension) ? extension : 'jpg';
+          
+          const filename = `${timestamp}.${safeExtension}`;
 
           // Upload to Supabase Storage
           const { data: uploadData, error: uploadError } = await supabase.storage
@@ -120,7 +195,11 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        blogPost: blogPost,
+        blogPost: {
+          id: blogPost.id,
+          title: blogPost.title,
+          created_at: blogPost.created_at
+        },
         message: 'Blog post created successfully' 
       }),
       {
@@ -128,17 +207,24 @@ const handler = async (req: Request): Promise<Response> => {
         headers: {
           'Content-Type': 'application/json',
           ...corsHeaders,
+          ...securityHeaders,
         },
       }
     );
 
   } catch (error: any) {
     console.error('Error in email-to-blog function:', error);
+    
+    // Don't expose internal error details
+    const errorMessage = error.message?.includes('duplicate') 
+      ? 'Blog post with this title already exists'
+      : 'Failed to create blog post';
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       {
         status: 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        headers: { 'Content-Type': 'application/json', ...corsHeaders, ...securityHeaders },
       }
     );
   }
