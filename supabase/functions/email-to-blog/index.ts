@@ -101,14 +101,20 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
     
+    // Debug the full CloudMailin data structure
+    console.log('Full CloudMailin data structure:', JSON.stringify(cloudmailinData, null, 2));
+    
     console.log('Received CloudMailin data:', {
-      from: cloudmailinData.envelope.from,
-      subject: cloudmailinData.headers.Subject,
+      from: cloudmailinData.envelope?.from,
+      subject: cloudmailinData.headers?.Subject || cloudmailinData.headers?.subject,
       hasAttachments: cloudmailinData.attachments?.length || 0
     });
 
-    // Validate and sanitize title
-    let title = cloudmailinData.headers?.Subject || 'Untitled Blog Post';
+    // Validate and sanitize title with multiple fallback options
+    let title = cloudmailinData.headers?.Subject || 
+                cloudmailinData.headers?.subject || 
+                cloudmailinData.subject ||
+                'Untitled Blog Post';
     title = validateAndSanitizeContent(title).substring(0, 200); // Limit title length
     
     // Validate and sanitize content
