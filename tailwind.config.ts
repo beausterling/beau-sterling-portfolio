@@ -65,8 +65,9 @@ export default {
 				},
                 // Custom colors
                 neon: '#3DF584',
-                dark: '#0f1218',
-                'dark-secondary': '#1a212c',
+                'neon-glow': '#2bc468',
+                dark: '#0a0a0a',
+                'dark-secondary': '#1a1a1a',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

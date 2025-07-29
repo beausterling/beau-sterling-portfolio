@@ -96,7 +96,7 @@
   }
 
   .text-glow {
-    text-shadow: 0 0 4px rgba(61, 245, 132, 0.3), 0 0 8px rgba(61, 245, 132, 0.1);
+    text-shadow: 0 0 2px rgba(61, 245, 132, 0.4);
   }
 }
 

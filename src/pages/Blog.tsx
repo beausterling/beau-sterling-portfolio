@@ -67,7 +67,7 @@ const Blog = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-dark text-white">
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-20">
           <div className="text-center mb-12">
             <Skeleton className="h-12 w-48 mx-auto mb-4" />
@@ -94,7 +94,7 @@ const Blog = () => {
   }
 
   return (
-    <div className="min-h-screen bg-dark text-white">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-20">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 text-glow">
