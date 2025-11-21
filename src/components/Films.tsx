@@ -1,7 +1,42 @@
 
-import { Youtube } from 'lucide-react';
+import ProjectCard from './ProjectCard';
 
 const Films = () => {
+  const films = [
+    {
+      title: "AI Film Project 1",
+      description: "An AI-generated film exploring creative storytelling through artificial intelligence. This project showcases the intersection of technology and visual arts.",
+      image: "https://img.youtube.com/vi/gqr2en_76M8/maxresdefault.jpg",
+      technologies: ["AI Generation", "Video Production", "Creative Direction"],
+      liveDemoUrl: "https://www.youtube.com/embed/gqr2en_76M8",
+      isVideo: true,
+    },
+    {
+      title: "AI Film Short 1",
+      description: "A short-form AI film experiment demonstrating the power of AI in creating compelling visual narratives in a condensed format.",
+      image: "https://img.youtube.com/vi/J4i_dJcWq3I/maxresdefault.jpg",
+      technologies: ["AI Generation", "Short Form", "Visual Effects"],
+      liveDemoUrl: "https://www.youtube.com/embed/J4i_dJcWq3I",
+      isVideo: true,
+    },
+    {
+      title: "AI Film Project 2",
+      description: "Another exploration into AI-powered filmmaking, pushing the boundaries of what's possible with generative AI in video production.",
+      image: "https://img.youtube.com/vi/nzvg_IbBuho/maxresdefault.jpg",
+      technologies: ["AI Generation", "Video Production", "Post-Production"],
+      liveDemoUrl: "https://www.youtube.com/embed/nzvg_IbBuho",
+      isVideo: true,
+    },
+    {
+      title: "AI Film Short 2",
+      description: "A creative short film showcasing innovative uses of AI in visual storytelling and cinematography.",
+      image: "https://img.youtube.com/vi/YDNvF-_YCCA/maxresdefault.jpg",
+      technologies: ["AI Generation", "Short Form", "Cinematography"],
+      liveDemoUrl: "https://www.youtube.com/embed/YDNvF-_YCCA",
+      isVideo: true,
+    },
+  ];
+
   return (
     <section id="films" className="py-24 relative bg-dark-secondary/30">
       <div className="container mx-auto px-4 md:px-8">
@@ -10,33 +45,18 @@ const Films = () => {
             AI <span className="text-neon text-glow">Film Work</span>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Explore my creative AI film projects and visual storytelling on YouTube.
+            Explore my creative AI film projects and visual storytelling.
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-dark-secondary border border-neon/20 rounded-lg p-8 hover:border-neon/40 transition-all duration-300">
-            <div className="flex flex-col items-center text-center space-y-6">
-              <div className="w-20 h-20 bg-neon/10 rounded-full flex items-center justify-center">
-                <Youtube size={40} className="text-neon" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold mb-2">YouTube Channel</h3>
-                <p className="text-gray-400 mb-6">
-                  Watch my latest AI film projects and creative experiments
-                </p>
-                <a
-                  href="YOUR_YOUTUBE_CHANNEL_URL"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-neon text-dark font-semibold rounded-lg hover:bg-neon/90 transition-colors duration-200"
-                >
-                  <Youtube size={20} />
-                  Visit My Channel
-                </a>
-              </div>
-            </div>
-          </div>
+        <div className="space-y-24">
+          {films.map((film, index) => (
+            <ProjectCard
+              key={film.title}
+              {...film}
+              reverse={index % 2 !== 0}
+            />
+          ))}
         </div>
       </div>
     </section>
