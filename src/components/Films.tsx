@@ -1,5 +1,5 @@
 
-import ProjectCard from './ProjectCard';
+import FilmCard from './FilmCard';
 
 const Films = () => {
   const films = [
@@ -8,32 +8,32 @@ const Films = () => {
       description: "An AI-generated film exploring creative storytelling through artificial intelligence. This project showcases the intersection of technology and visual arts.",
       image: "https://img.youtube.com/vi/gqr2en_76M8/maxresdefault.jpg",
       technologies: ["AI Generation", "Video Production", "Creative Direction"],
-      liveDemoUrl: "https://www.youtube.com/embed/gqr2en_76M8",
-      isVideo: true,
+      embedUrl: "https://www.youtube.com/embed/gqr2en_76M8",
+      youtubeUrl: "https://youtu.be/gqr2en_76M8",
     },
     {
       title: "AI Film Short 1",
       description: "A short-form AI film experiment demonstrating the power of AI in creating compelling visual narratives in a condensed format.",
       image: "https://img.youtube.com/vi/J4i_dJcWq3I/maxresdefault.jpg",
       technologies: ["AI Generation", "Short Form", "Visual Effects"],
-      liveDemoUrl: "https://www.youtube.com/embed/J4i_dJcWq3I",
-      isVideo: true,
+      embedUrl: "https://www.youtube.com/embed/J4i_dJcWq3I",
+      youtubeUrl: "https://youtube.com/shorts/J4i_dJcWq3I",
     },
     {
       title: "AI Film Project 2",
       description: "Another exploration into AI-powered filmmaking, pushing the boundaries of what's possible with generative AI in video production.",
       image: "https://img.youtube.com/vi/nzvg_IbBuho/maxresdefault.jpg",
       technologies: ["AI Generation", "Video Production", "Post-Production"],
-      liveDemoUrl: "https://www.youtube.com/embed/nzvg_IbBuho",
-      isVideo: true,
+      embedUrl: "https://www.youtube.com/embed/nzvg_IbBuho",
+      youtubeUrl: "https://youtu.be/nzvg_IbBuho",
     },
     {
       title: "AI Film Short 2",
       description: "A creative short film showcasing innovative uses of AI in visual storytelling and cinematography.",
       image: "https://img.youtube.com/vi/YDNvF-_YCCA/maxresdefault.jpg",
       technologies: ["AI Generation", "Short Form", "Cinematography"],
-      liveDemoUrl: "https://www.youtube.com/embed/YDNvF-_YCCA",
-      isVideo: true,
+      embedUrl: "https://www.youtube.com/embed/YDNvF-_YCCA",
+      youtubeUrl: "https://youtube.com/shorts/YDNvF-_YCCA",
     },
   ];
 
@@ -51,7 +51,7 @@ const Films = () => {
 
         <div className="space-y-24">
           {films.map((film, index) => (
-            <ProjectCard
+            <FilmCard
               key={film.title}
               {...film}
               reverse={index % 2 !== 0}
