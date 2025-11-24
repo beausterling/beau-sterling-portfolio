@@ -15,7 +15,7 @@ const Hero = () => {
           <h1 className="text-4xl md:text-6xl font-bold mb-4 md:mb-6 opacity-0 animate-fade-in" style={{
           animationDelay: '200ms'
         }}>
-            A <span className="text-neon animate-glow-slow">Creative AI</span>. I Help Startups <span className="text-neon animate-glow-slow">Launch</span> And <span className="text-neon animate-glow-slow">Grow</span> Their Products
+            A <span className="text-neon animate-glow-slow">Creative AI Engineer</span>. I Help Startups <span className="text-neon animate-glow-slow">Launch</span> And <span className="text-neon animate-glow-slow">Grow</span> Their Products
           </h1>
           
           <p className="text-lg md:text-xl text-gray-300 mb-8 opacity-0 animate-fade-in" style={{
