@@ -26,10 +26,13 @@ const CursorPlayground = () => {
   const [cursorStyle, setCursorStyle] = useState<'circle' | 'star' | 'heart' | 'ring' | 'glow' | 'emoji'>('circle');
   const [trailStyle, setTrailStyle] = useState<'none' | 'particles' | 'rainbow' | 'bubbles' | 'snake' | 'firework'>('particles');
   const [clickStyle, setClickStyle] = useState<'ripple' | 'explosion' | 'rings' | 'starburst' | 'confetti' | 'fire'>('ripple');
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [particles, setParticles] = useState<Particle[]>([]);
-  const [trail, setTrail] = useState<TrailPoint[]>([]);
+  const [mousePos, setMousePos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+
+  // Use refs for animation data to avoid state update issues
+  const particlesRef = useRef<Particle[]>([]);
+  const trailRef = useRef<TrailPoint[]>([]);
   const particleIdRef = useRef(0);
+  const animationFrameRef = useRef<number>();
 
   const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B400', '#F06292'];
 
@@ -40,17 +43,16 @@ const CursorPlayground = () => {
 
       // Add trail point
       if (trailStyle !== 'none') {
-        setTrail(prev => {
-          const newTrail = [...prev, { x: newPos.x, y: newPos.y, opacity: 1 }];
-          return newTrail.slice(-20); // Keep last 20 points
-        });
+        trailRef.current.push({ x: newPos.x, y: newPos.y, opacity: 1 });
+        if (trailRef.current.length > 20) {
+          trailRef.current.shift();
+        }
       }
 
       // Create trail particles
       if (trailStyle === 'particles' || trailStyle === 'firework') {
-        const newParticles: Particle[] = [];
         for (let i = 0; i < 2; i++) {
-          newParticles.push({
+          particlesRef.current.push({
             id: particleIdRef.current++,
             x: newPos.x + (Math.random() - 0.5) * 20,
             y: newPos.y + (Math.random() - 0.5) * 20,
@@ -63,36 +65,32 @@ const CursorPlayground = () => {
             opacity: 1,
           });
         }
-        setParticles(prev => [...prev, ...newParticles]);
       }
 
-      if (trailStyle === 'bubbles') {
-        if (Math.random() > 0.7) {
-          setParticles(prev => [...prev, {
-            id: particleIdRef.current++,
-            x: newPos.x,
-            y: newPos.y,
-            vy: -2,
-            life: 0,
-            maxLife: 60,
-            size: Math.random() * 20 + 10,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            opacity: 0.6,
-          }]);
-        }
+      if (trailStyle === 'bubbles' && Math.random() > 0.7) {
+        particlesRef.current.push({
+          id: particleIdRef.current++,
+          x: newPos.x,
+          y: newPos.y,
+          vy: -2,
+          life: 0,
+          maxLife: 60,
+          size: Math.random() * 20 + 10,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          opacity: 0.6,
+        });
       }
     };
 
     const handleClick = (e: MouseEvent) => {
       const clickPos = { x: e.clientX, y: e.clientY };
-      const newParticles: Particle[] = [];
 
       switch (clickStyle) {
         case 'explosion':
           for (let i = 0; i < 30; i++) {
             const angle = (Math.PI * 2 * i) / 30;
             const speed = Math.random() * 5 + 3;
-            newParticles.push({
+            particlesRef.current.push({
               id: particleIdRef.current++,
               x: clickPos.x,
               y: clickPos.y,
@@ -109,7 +107,7 @@ const CursorPlayground = () => {
 
         case 'confetti':
           for (let i = 0; i < 40; i++) {
-            newParticles.push({
+            particlesRef.current.push({
               id: particleIdRef.current++,
               x: clickPos.x,
               y: clickPos.y,
@@ -127,7 +125,7 @@ const CursorPlayground = () => {
         case 'starburst':
           for (let i = 0; i < 12; i++) {
             const angle = (Math.PI * 2 * i) / 12;
-            newParticles.push({
+            particlesRef.current.push({
               id: particleIdRef.current++,
               x: clickPos.x,
               y: clickPos.y,
@@ -144,7 +142,7 @@ const CursorPlayground = () => {
 
         case 'fire':
           for (let i = 0; i < 25; i++) {
-            newParticles.push({
+            particlesRef.current.push({
               id: particleIdRef.current++,
               x: clickPos.x + (Math.random() - 0.5) * 20,
               y: clickPos.y + (Math.random() - 0.5) * 20,
@@ -161,7 +159,7 @@ const CursorPlayground = () => {
 
         case 'ripple':
           for (let i = 0; i < 3; i++) {
-            newParticles.push({
+            particlesRef.current.push({
               id: particleIdRef.current++,
               x: clickPos.x,
               y: clickPos.y,
@@ -176,7 +174,7 @@ const CursorPlayground = () => {
 
         case 'rings':
           for (let i = 0; i < 5; i++) {
-            newParticles.push({
+            particlesRef.current.push({
               id: particleIdRef.current++,
               x: clickPos.x,
               y: clickPos.y,
@@ -189,8 +187,6 @@ const CursorPlayground = () => {
           }
           break;
       }
-
-      setParticles(prev => [...prev, ...newParticles]);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -218,10 +214,10 @@ const CursorPlayground = () => {
 
       // Draw trail
       if (trailStyle === 'rainbow' || trailStyle === 'snake') {
-        trail.forEach((point, i) => {
-          const opacity = (i / trail.length) * 0.8;
-          const size = (i / trail.length) * 20 + 5;
-          const hue = (i / trail.length) * 360;
+        trailRef.current.forEach((point, i) => {
+          const opacity = (i / trailRef.current.length) * 0.8;
+          const size = (i / trailRef.current.length) * 20 + 5;
+          const hue = (i / trailRef.current.length) * 360;
 
           ctx.beginPath();
           ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
@@ -233,65 +229,60 @@ const CursorPlayground = () => {
       }
 
       // Update and draw particles
-      setParticles(prev => {
-        return prev.filter(particle => {
-          particle.life++;
+      particlesRef.current = particlesRef.current.filter(particle => {
+        particle.life++;
 
-          if (particle.vx !== undefined) particle.x += particle.vx;
-          if (particle.vy !== undefined) {
-            particle.y += particle.vy;
-            if (clickStyle === 'confetti' || trailStyle === 'bubbles') {
-              particle.vy += 0.2; // Gravity
-            }
+        if (particle.vx !== undefined) particle.x += particle.vx;
+        if (particle.vy !== undefined) {
+          particle.y += particle.vy;
+          if (clickStyle === 'confetti' || trailStyle === 'bubbles') {
+            particle.vy += 0.2; // Gravity
           }
+        }
 
-          const progress = particle.life / particle.maxLife;
-          particle.opacity = 1 - progress;
+        const progress = particle.life / particle.maxLife;
+        particle.opacity = 1 - progress;
 
-          if (particle.life >= particle.maxLife) return false;
+        if (particle.life >= particle.maxLife) return false;
 
-          // Draw particle
-          ctx.save();
-          ctx.globalAlpha = particle.opacity;
+        // Draw particle
+        ctx.save();
+        ctx.globalAlpha = particle.opacity;
 
-          if (clickStyle === 'ripple' || clickStyle === 'rings') {
-            // Expanding ring
-            const currentSize = progress * 100;
-            ctx.beginPath();
-            ctx.arc(particle.x, particle.y, currentSize, 0, Math.PI * 2);
-            ctx.strokeStyle = particle.color;
-            ctx.lineWidth = 3;
-            ctx.stroke();
-          } else if (clickStyle === 'starburst') {
-            // Star shape
-            ctx.fillStyle = particle.color;
-            ctx.beginPath();
-            for (let i = 0; i < 5; i++) {
-              const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
-              const x = particle.x + Math.cos(angle) * particle.size;
-              const y = particle.y + Math.sin(angle) * particle.size;
-              if (i === 0) ctx.moveTo(x, y);
-              else ctx.lineTo(x, y);
-            }
-            ctx.closePath();
-            ctx.fill();
-          } else {
-            // Circle particle
-            ctx.beginPath();
-            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-            ctx.fillStyle = particle.color;
-            ctx.fill();
+        if (clickStyle === 'ripple' || clickStyle === 'rings') {
+          // Expanding ring
+          const currentSize = progress * 100;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, currentSize, 0, Math.PI * 2);
+          ctx.strokeStyle = particle.color;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        } else if (clickStyle === 'starburst') {
+          // Star shape
+          ctx.fillStyle = particle.color;
+          ctx.beginPath();
+          for (let i = 0; i < 5; i++) {
+            const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+            const x = particle.x + Math.cos(angle) * particle.size;
+            const y = particle.y + Math.sin(angle) * particle.size;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
           }
+          ctx.closePath();
+          ctx.fill();
+        } else {
+          // Circle particle
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fillStyle = particle.color;
+          ctx.fill();
+        }
 
-          ctx.restore();
-          return true;
-        });
+        ctx.restore();
+        return true;
       });
 
-      // Fade trail
-      setTrail(prev => prev.filter((_, i) => i > prev.length - 20));
-
-      requestAnimationFrame(animate);
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
     animate();
@@ -302,8 +293,14 @@ const CursorPlayground = () => {
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [trail, clickStyle, trailStyle]);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [trailStyle, clickStyle]);
 
   // Render custom cursor
   const renderCursor = () => {
@@ -369,21 +366,21 @@ const CursorPlayground = () => {
       {renderCursor()}
 
       {/* Back button */}
-      <Link to="/" className="absolute top-4 left-4 z-40">
-        <button className="flex items-center gap-2 px-4 py-2 bg-dark-secondary/80 backdrop-blur-sm text-gray-200 rounded-lg hover:bg-dark-secondary hover:text-neon transition-colors border border-gray-700">
+      <Link to="/" className="absolute top-4 left-4 z-40 cursor-auto">
+        <button className="flex items-center gap-2 px-4 py-2 bg-dark-secondary/80 backdrop-blur-sm text-gray-200 rounded-lg hover:bg-dark-secondary hover:text-neon transition-colors border border-gray-700 cursor-pointer">
           <ArrowLeft size={20} />
           Back Home
         </button>
       </Link>
 
       {/* Title */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 text-center">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 text-center cursor-auto">
         <h1 className="text-4xl font-bold text-neon text-glow mb-2">Cursor Playground</h1>
         <p className="text-gray-400">Move your mouse and click to interact!</p>
       </div>
 
       {/* Controls */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 bg-dark-secondary/90 backdrop-blur-md p-6 rounded-lg border border-gray-700 max-w-4xl w-full mx-4">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 bg-dark-secondary/90 backdrop-blur-md p-6 rounded-lg border border-gray-700 max-w-4xl w-full mx-4 cursor-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Cursor Style */}
           <div>
@@ -393,7 +390,7 @@ const CursorPlayground = () => {
                 <button
                   key={style}
                   onClick={() => setCursorStyle(style)}
-                  className={`px-3 py-2 rounded text-xs transition-all ${
+                  className={`px-3 py-2 rounded text-xs transition-all cursor-pointer ${
                     cursorStyle === style
                       ? 'bg-neon text-dark font-semibold'
                       : 'bg-dark text-gray-300 hover:bg-gray-700'
@@ -413,7 +410,7 @@ const CursorPlayground = () => {
                 <button
                   key={style}
                   onClick={() => setTrailStyle(style)}
-                  className={`px-3 py-2 rounded text-xs transition-all ${
+                  className={`px-3 py-2 rounded text-xs transition-all cursor-pointer ${
                     trailStyle === style
                       ? 'bg-neon text-dark font-semibold'
                       : 'bg-dark text-gray-300 hover:bg-gray-700'
@@ -433,7 +430,7 @@ const CursorPlayground = () => {
                 <button
                   key={style}
                   onClick={() => setClickStyle(style)}
-                  className={`px-3 py-2 rounded text-xs transition-all ${
+                  className={`px-3 py-2 rounded text-xs transition-all cursor-pointer ${
                     clickStyle === style
                       ? 'bg-neon text-dark font-semibold'
                       : 'bg-dark text-gray-300 hover:bg-gray-700'
