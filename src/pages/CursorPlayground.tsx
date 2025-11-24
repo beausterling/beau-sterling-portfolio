@@ -13,6 +13,8 @@ interface Particle {
   size: number;
   color: string;
   opacity: number;
+  type: 'trail' | 'click';
+  renderStyle?: string;
 }
 
 interface TrailPoint {
@@ -27,6 +29,16 @@ const CursorPlayground = () => {
   const [trailStyle, setTrailStyle] = useState<'none' | 'particles' | 'rainbow' | 'bubbles' | 'snake' | 'firework'>('particles');
   const [clickStyle, setClickStyle] = useState<'ripple' | 'explosion' | 'rings' | 'starburst' | 'confetti' | 'fire'>('ripple');
   const [mousePos, setMousePos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+
+  // Cursor style display names
+  const cursorStyleNames: Record<string, string> = {
+    circle: 'circle',
+    star: 'classic',
+    heart: 'neo pink',
+    ring: 'ring',
+    glow: 'glow',
+    emoji: 'magic wand'
+  };
 
   // Use refs for animation data to avoid state update issues
   const particlesRef = useRef<Particle[]>([]);
@@ -50,7 +62,7 @@ const CursorPlayground = () => {
       }
 
       // Create trail particles
-      if (trailStyle === 'particles' || trailStyle === 'firework') {
+      if (trailStyle === 'particles') {
         for (let i = 0; i < 2; i++) {
           particlesRef.current.push({
             id: particleIdRef.current++,
@@ -63,6 +75,28 @@ const CursorPlayground = () => {
             size: Math.random() * 8 + 4,
             color: colors[Math.floor(Math.random() * colors.length)],
             opacity: 1,
+            type: 'trail',
+            renderStyle: 'circle',
+          });
+        }
+      }
+
+      if (trailStyle === 'firework') {
+        // Create firework/spark particles
+        for (let i = 0; i < 3; i++) {
+          particlesRef.current.push({
+            id: particleIdRef.current++,
+            x: newPos.x + (Math.random() - 0.5) * 10,
+            y: newPos.y + (Math.random() - 0.5) * 10,
+            vx: (Math.random() - 0.5) * 4,
+            vy: Math.random() * -3 - 1,
+            life: 0,
+            maxLife: 25,
+            size: Math.random() * 4 + 2,
+            color: ['#FFD700', '#FFA500', '#FF6347', '#FFFF00', '#FF4500'][Math.floor(Math.random() * 5)],
+            opacity: 1,
+            type: 'trail',
+            renderStyle: 'circle',
           });
         }
       }
@@ -78,6 +112,8 @@ const CursorPlayground = () => {
           size: Math.random() * 20 + 10,
           color: colors[Math.floor(Math.random() * colors.length)],
           opacity: 0.6,
+          type: 'trail',
+          renderStyle: 'circle',
         });
       }
     };
@@ -101,6 +137,8 @@ const CursorPlayground = () => {
               size: Math.random() * 6 + 3,
               color: colors[Math.floor(Math.random() * colors.length)],
               opacity: 1,
+              type: 'click',
+              renderStyle: clickStyle,
             });
           }
           break;
@@ -118,6 +156,8 @@ const CursorPlayground = () => {
               size: Math.random() * 8 + 4,
               color: colors[Math.floor(Math.random() * colors.length)],
               opacity: 1,
+              type: 'click',
+              renderStyle: clickStyle,
             });
           }
           break;
@@ -136,6 +176,8 @@ const CursorPlayground = () => {
               size: 12,
               color: colors[Math.floor(Math.random() * colors.length)],
               opacity: 1,
+              type: 'click',
+              renderStyle: clickStyle,
             });
           }
           break;
@@ -153,6 +195,8 @@ const CursorPlayground = () => {
               size: Math.random() * 10 + 5,
               color: ['#FF6B00', '#FF8800', '#FFAA00', '#FF0000', '#FFD700'][Math.floor(Math.random() * 5)],
               opacity: 1,
+              type: 'click',
+              renderStyle: clickStyle,
             });
           }
           break;
@@ -168,6 +212,8 @@ const CursorPlayground = () => {
               size: 0,
               color: colors[Math.floor(Math.random() * colors.length)],
               opacity: 1,
+              type: 'click',
+              renderStyle: clickStyle,
             });
           }
           break;
@@ -183,6 +229,8 @@ const CursorPlayground = () => {
               size: 0,
               color: colors[Math.floor(Math.random() * colors.length)],
               opacity: 1,
+              type: 'click',
+              renderStyle: clickStyle,
             });
           }
           break;
@@ -219,12 +267,17 @@ const CursorPlayground = () => {
           const size = (i / trailRef.current.length) * 20 + 5;
           const hue = (i / trailRef.current.length) * 360;
 
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
-          ctx.fillStyle = trailStyle === 'rainbow'
-            ? `hsla(${hue}, 100%, 60%, ${opacity})`
-            : `rgba(61, 245, 132, ${opacity})`;
-          ctx.fill();
+          if (trailStyle === 'snake') {
+            // Draw squares for snake trail
+            ctx.fillStyle = `rgba(61, 245, 132, ${opacity})`;
+            ctx.fillRect(point.x - size, point.y - size, size * 2, size * 2);
+          } else {
+            // Draw circles for rainbow trail
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${hue}, 100%, 60%, ${opacity})`;
+            ctx.fill();
+          }
         });
       }
 
@@ -235,7 +288,8 @@ const CursorPlayground = () => {
         if (particle.vx !== undefined) particle.x += particle.vx;
         if (particle.vy !== undefined) {
           particle.y += particle.vy;
-          if (clickStyle === 'confetti' || trailStyle === 'bubbles') {
+          // Apply gravity to confetti clicks and trail particles (bubbles, firework)
+          if (particle.renderStyle === 'confetti' || (particle.type === 'trail' && particle.renderStyle === 'circle')) {
             particle.vy += 0.2; // Gravity
           }
         }
@@ -249,7 +303,7 @@ const CursorPlayground = () => {
         ctx.save();
         ctx.globalAlpha = particle.opacity;
 
-        if (clickStyle === 'ripple' || clickStyle === 'rings') {
+        if (particle.renderStyle === 'ripple' || particle.renderStyle === 'rings') {
           // Expanding ring
           const currentSize = progress * 100;
           ctx.beginPath();
@@ -257,7 +311,7 @@ const CursorPlayground = () => {
           ctx.strokeStyle = particle.color;
           ctx.lineWidth = 3;
           ctx.stroke();
-        } else if (clickStyle === 'starburst') {
+        } else if (particle.renderStyle === 'starburst') {
           // Star shape
           ctx.fillStyle = particle.color;
           ctx.beginPath();
@@ -271,7 +325,7 @@ const CursorPlayground = () => {
           ctx.closePath();
           ctx.fill();
         } else {
-          // Circle particle
+          // Circle particle (default for trails and other effects)
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
           ctx.fillStyle = particle.color;
@@ -317,15 +371,37 @@ const CursorPlayground = () => {
 
       case 'star':
         return (
-          <div className={baseClass} style={style}>
-            <div className="text-4xl animate-spin" style={{ animationDuration: '2s' }}>⭐</div>
+          <div
+            className={baseClass}
+            style={{
+              left: mousePos.x,
+              top: mousePos.y,
+              transform: 'translate(0, 0)' // Top-left hotspot
+            }}
+          >
+            <img
+              src="/cursors/classic.png"
+              alt="Classic cursor"
+              className="w-12 h-12 pointer-events-none"
+            />
           </div>
         );
 
       case 'heart':
         return (
-          <div className={baseClass} style={style}>
-            <div className="text-4xl animate-pulse text-pink-500">💖</div>
+          <div
+            className={baseClass}
+            style={{
+              left: mousePos.x,
+              top: mousePos.y,
+              transform: 'translate(0, 0)' // Top-left hotspot
+            }}
+          >
+            <img
+              src="/cursors/neo-pink.png"
+              alt="Neo Pink cursor"
+              className="w-12 h-12 pointer-events-none"
+            />
           </div>
         );
 
@@ -349,8 +425,19 @@ const CursorPlayground = () => {
 
       case 'emoji':
         return (
-          <div className={baseClass} style={style}>
-            <div className="text-3xl">🚀</div>
+          <div
+            className={baseClass}
+            style={{
+              left: mousePos.x,
+              top: mousePos.y,
+              transform: 'translate(0, 0)' // Top-left hotspot
+            }}
+          >
+            <img
+              src="/cursors/magic-wand.png"
+              alt="Magic Wand cursor"
+              className="w-12 h-12 pointer-events-none"
+            />
           </div>
         );
 
@@ -396,7 +483,7 @@ const CursorPlayground = () => {
                       : 'bg-dark text-gray-300 hover:bg-gray-700'
                   }`}
                 >
-                  {style}
+                  {cursorStyleNames[style]}
                 </button>
               ))}
             </div>
