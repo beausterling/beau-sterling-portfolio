@@ -3,7 +3,7 @@ import { Code, Cpu, Layers, LineChart, LayoutGrid, Rocket } from 'lucide-react';
 
 const About = () => {
   const skills = [
-    { name: "Frontend Development", icon: <Code className="text-neon" size={24} /> },
+    { name: "Full-Stack Development", icon: <Code className="text-neon" size={24} /> },
     { name: "UI/UX Design", icon: <LayoutGrid className="text-neon" size={24} /> },
     { name: "Automation Workflows", icon: <Layers className="text-neon" size={24} /> },
     { name: "AI Integration", icon: <Cpu className="text-neon" size={24} /> },

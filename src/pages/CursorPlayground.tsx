@@ -49,8 +49,8 @@ const CursorPlayground = () => {
   const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B400', '#F06292'];
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const newPos = { x: e.clientX, y: e.clientY };
+    const handleMove = (x: number, y: number) => {
+      const newPos = { x, y };
       setMousePos(newPos);
 
       // Add trail point
@@ -118,8 +118,20 @@ const CursorPlayground = () => {
       }
     };
 
-    const handleClick = (e: MouseEvent) => {
-      const clickPos = { x: e.clientX, y: e.clientY };
+    const handleMouseMove = (e: MouseEvent) => {
+      handleMove(e.clientX, e.clientY);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        handleMove(touch.clientX, touch.clientY);
+      }
+    };
+
+    const createClickEffect = (x: number, y: number) => {
+      const clickPos = { x, y };
 
       switch (clickStyle) {
         case 'explosion':
@@ -237,12 +249,27 @@ const CursorPlayground = () => {
       }
     };
 
+    const handleClick = (e: MouseEvent) => {
+      createClickEffect(e.clientX, e.clientY);
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        createClickEffect(touch.clientX, touch.clientY);
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('click', handleClick);
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('click', handleClick);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchstart', handleTouchStart);
     };
   }, [trailStyle, clickStyle]);
 
@@ -447,30 +474,37 @@ const CursorPlayground = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen bg-black overflow-hidden cursor-none">
+    <div className="relative w-screen h-screen bg-black overflow-hidden md:cursor-none touch-none">
       <canvas ref={canvasRef} className="absolute inset-0" />
 
-      {renderCursor()}
+      {/* Custom cursor - hidden on mobile */}
+      <div className="hidden md:block">
+        {renderCursor()}
+      </div>
 
       {/* Back button */}
-      <Link to="/" className="absolute top-4 left-4 z-40 cursor-auto">
-        <button className="flex items-center gap-2 px-4 py-2 bg-dark-secondary/80 backdrop-blur-sm text-gray-200 rounded-lg hover:bg-dark-secondary hover:text-neon transition-colors border border-gray-700 cursor-pointer">
-          <ArrowLeft size={20} />
-          Back Home
+      <Link to="/" className="absolute top-3 left-3 md:top-4 md:left-4 z-40 cursor-auto">
+        <button className="flex items-center gap-1 md:gap-2 px-3 py-2 md:px-4 md:py-2 bg-dark-secondary/80 backdrop-blur-sm text-gray-200 rounded-lg hover:bg-dark-secondary hover:text-neon transition-colors border border-gray-700 cursor-pointer text-sm">
+          <ArrowLeft size={18} className="md:w-5 md:h-5" />
+          <span className="hidden sm:inline">Back Home</span>
+          <span className="sm:hidden">Back</span>
         </button>
       </Link>
 
       {/* Title */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 text-center cursor-auto">
-        <h1 className="text-4xl font-bold text-neon text-glow mb-2">Cursor Playground</h1>
-        <p className="text-gray-400">Move your mouse and click to interact!</p>
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 text-center cursor-auto px-4 md:top-4">
+        <h1 className="text-2xl md:text-4xl font-bold text-neon text-glow mb-1 md:mb-2">Cursor Playground</h1>
+        <p className="text-gray-400 text-xs md:text-base">
+          <span className="hidden md:inline">Move your mouse and click to interact!</span>
+          <span className="md:hidden">Drag and tap to interact!</span>
+        </p>
       </div>
 
       {/* Controls */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 bg-dark-secondary/90 backdrop-blur-md p-6 rounded-lg border border-gray-700 max-w-4xl w-full mx-4 cursor-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Cursor Style */}
-          <div>
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-40 bg-dark-secondary/90 backdrop-blur-md p-3 md:p-6 rounded-lg border border-gray-700 max-w-4xl w-full mx-2 md:mx-4 md:bottom-4 cursor-auto max-h-[40vh] overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
+          {/* Cursor Style - Hidden on mobile */}
+          <div className="hidden md:block">
             <h3 className="text-neon font-semibold mb-3 text-sm">Cursor Style</h3>
             <div className="grid grid-cols-3 gap-2">
               {(['circle', 'star', 'heart', 'ring', 'glow', 'emoji'] as const).map((style) => (
@@ -491,16 +525,16 @@ const CursorPlayground = () => {
 
           {/* Trail Style */}
           <div>
-            <h3 className="text-neon font-semibold mb-3 text-sm">Movement Trail</h3>
-            <div className="grid grid-cols-3 gap-2">
+            <h3 className="text-neon font-semibold mb-2 md:mb-3 text-xs md:text-sm">Movement Trail</h3>
+            <div className="grid grid-cols-3 gap-1.5 md:gap-2">
               {(['none', 'particles', 'rainbow', 'bubbles', 'snake', 'firework'] as const).map((style) => (
                 <button
                   key={style}
                   onClick={() => setTrailStyle(style)}
-                  className={`px-3 py-2 rounded text-xs transition-all cursor-pointer ${
+                  className={`px-2 py-1.5 md:px-3 md:py-2 rounded text-[10px] md:text-xs transition-all cursor-pointer touch-manipulation ${
                     trailStyle === style
                       ? 'bg-neon text-dark font-semibold'
-                      : 'bg-dark text-gray-300 hover:bg-gray-700'
+                      : 'bg-dark text-gray-300 hover:bg-gray-700 active:bg-gray-600'
                   }`}
                 >
                   {style}
@@ -511,16 +545,19 @@ const CursorPlayground = () => {
 
           {/* Click Effect */}
           <div>
-            <h3 className="text-neon font-semibold mb-3 text-sm">Click Effect</h3>
-            <div className="grid grid-cols-3 gap-2">
+            <h3 className="text-neon font-semibold mb-2 md:mb-3 text-xs md:text-sm">
+              <span className="hidden md:inline">Click Effect</span>
+              <span className="md:hidden">Tap Effect</span>
+            </h3>
+            <div className="grid grid-cols-3 gap-1.5 md:gap-2">
               {(['ripple', 'explosion', 'rings', 'starburst', 'confetti', 'fire'] as const).map((style) => (
                 <button
                   key={style}
                   onClick={() => setClickStyle(style)}
-                  className={`px-3 py-2 rounded text-xs transition-all cursor-pointer ${
+                  className={`px-2 py-1.5 md:px-3 md:py-2 rounded text-[10px] md:text-xs transition-all cursor-pointer touch-manipulation ${
                     clickStyle === style
                       ? 'bg-neon text-dark font-semibold'
-                      : 'bg-dark text-gray-300 hover:bg-gray-700'
+                      : 'bg-dark text-gray-300 hover:bg-gray-700 active:bg-gray-600'
                   }`}
                 >
                   {style}
