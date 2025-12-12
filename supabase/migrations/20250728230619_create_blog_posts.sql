@@ -1,12 +1,3 @@
--- Create function to update timestamps
-CREATE OR REPLACE FUNCTION public.update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = now();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
 -- Create blog_posts table
 CREATE TABLE public.blog_posts (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -35,16 +26,10 @@ FOR INSERT
 WITH CHECK (true);
 
 -- Create policy for updates (will be used by edge function)
-CREATE POLICY "Allow edge function to update blog posts" 
-ON public.blog_posts 
-FOR UPDATE 
+CREATE POLICY "Allow edge function to update blog posts"
+ON public.blog_posts
+FOR UPDATE
 USING (true);
-
--- Create trigger for automatic timestamp updates
-CREATE TRIGGER update_blog_posts_updated_at
-BEFORE UPDATE ON public.blog_posts
-FOR EACH ROW
-EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Create storage bucket for blog images
 INSERT INTO storage.buckets (id, name, public) VALUES ('blog-images', 'blog-images', true);
@@ -55,7 +40,6 @@ ON storage.objects
 FOR SELECT 
 USING (bucket_id = 'blog-images');
 
--- Create policy for edge function to upload blog images
 CREATE POLICY "Allow edge function to upload blog images" 
 ON storage.objects 
 FOR INSERT 
