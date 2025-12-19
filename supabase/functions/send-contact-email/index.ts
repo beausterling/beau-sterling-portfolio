@@ -1,7 +1,11 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+if (!RESEND_API_KEY) {
+  console.error("FATAL: RESEND_API_KEY environment variable is not set!");
+}
+const resend = new Resend(RESEND_API_KEY);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -198,25 +202,35 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending contact emails for:", { name, email: email.substring(0, 3) + "***" });
 
     // Send notification email to Beau
-    const notificationResponse = await resend.emails.send({
-      from: "Portfolio Contact <onboarding@resend.dev>",
-      to: ["beaujsterling@gmail.com"],
-      replyTo: email,
-      subject: `New Contact Form Message from ${name}`,
-      html: createNotificationEmail(name, email, message),
-    });
-
-    console.log("Notification email sent:", notificationResponse);
+    console.log("Attempting to send notification email...");
+    try {
+      const notificationResponse = await resend.emails.send({
+        from: "Portfolio Contact <onboarding@resend.dev>",
+        to: ["beaujsterling@gmail.com"],
+        replyTo: email,
+        subject: `New Contact Form Message from ${name}`,
+        html: createNotificationEmail(name, email, message),
+      });
+      console.log("Notification email sent successfully:", notificationResponse.data?.id || notificationResponse);
+    } catch (notificationError: any) {
+      console.error("Failed to send notification email:", notificationError);
+      throw notificationError; // Re-throw to trigger main catch block
+    }
 
     // Send confirmation email to the user
-    const confirmationResponse = await resend.emails.send({
-      from: "Beau Sterling <onboarding@resend.dev>",
-      to: [email],
-      subject: "Thank you for your message!",
-      html: createConfirmationEmail(name),
-    });
-
-    console.log("Confirmation email sent:", confirmationResponse);
+    console.log("Attempting to send confirmation email...");
+    try {
+      const confirmationResponse = await resend.emails.send({
+        from: "Beau Sterling <onboarding@resend.dev>",
+        to: [email],
+        subject: "Thank you for your message!",
+        html: createConfirmationEmail(name),
+      });
+      console.log("Confirmation email sent successfully:", confirmationResponse.data?.id || confirmationResponse);
+    } catch (confirmationError: any) {
+      console.error("Failed to send confirmation email:", confirmationError);
+      // Don't throw - notification was sent successfully
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
@@ -227,13 +241,35 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Error sending contact emails:", error);
-    
-    // Don't expose internal error details in production
-    const errorMessage = error.message?.includes('rate limit') 
-      ? 'Rate limit exceeded. Please try again later.'
-      : 'Failed to send email. Please try again later.';
-    
+    // Log comprehensive error details
+    console.error("Error sending contact emails:", {
+      message: error.message,
+      stack: error.stack,
+      statusCode: error.statusCode,
+      name: error.name,
+    });
+
+    // Check if API key is set
+    const apiKey = Deno.env.get("RESEND_API_KEY");
+    if (!apiKey) {
+      console.error("CRITICAL: RESEND_API_KEY is not set!");
+    } else {
+      console.log("RESEND_API_KEY is set (length:", apiKey.length, ")");
+    }
+
+    // Provide specific error messages based on error type
+    let errorMessage = 'Failed to send email. Please try again later.';
+
+    if (error.statusCode === 401 || error.message?.includes('unauthorized')) {
+      errorMessage = 'Email authentication failed.';
+      console.error("CHECK RESEND_API_KEY - appears to be invalid");
+    } else if (error.statusCode === 429 || error.message?.includes('rate limit')) {
+      errorMessage = 'Rate limit exceeded. Please try again later.';
+    } else if (error.statusCode === 403 || error.message?.includes('forbidden')) {
+      errorMessage = 'Email sending forbidden.';
+      console.error("CHECK SENDER DOMAIN - may need verification");
+    }
+
     return new Response(
       JSON.stringify({ error: errorMessage }),
       {
