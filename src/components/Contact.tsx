@@ -10,6 +10,7 @@ const Contact = () => {
     name: '',
     email: '',
     message: '',
+    website: '', // Honeypot field - should remain empty for real users
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,6 +29,15 @@ const Contact = () => {
       });
 
       if (error) {
+        // Check for rate limiting
+        if (error.message?.includes('429') || error.message?.includes('Too many requests')) {
+          toast({
+            title: "Too many requests",
+            description: "Please wait a few minutes before sending another message.",
+            variant: "destructive",
+          });
+          return;
+        }
         throw error;
       }
 
@@ -36,7 +46,7 @@ const Contact = () => {
         description: "Thanks for reaching out. I'll get back to you soon.",
       });
       
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', message: '', website: '' });
     } catch (error) {
       console.error('Error sending email:', error);
       toast({
@@ -114,6 +124,20 @@ const Contact = () => {
                 className="w-full px-4 py-3 bg-dark-secondary border border-gray-800 focus:border-neon/50 focus:outline-none focus:ring-1 focus:ring-neon/50 rounded-lg transition-colors resize-none"
                 placeholder="Tell me about your project..."
               ></textarea>
+            </div>
+            
+            {/* Honeypot field - hidden from real users, bots will fill it */}
+            <div className="absolute -left-[9999px] opacity-0 pointer-events-none" aria-hidden="true">
+              <label htmlFor="website" className="sr-only">Website (leave blank)</label>
+              <input
+                type="text"
+                id="website"
+                name="website"
+                value={formData.website}
+                onChange={handleChange}
+                tabIndex={-1}
+                autoComplete="off"
+              />
             </div>
             
             <div className="flex justify-end">
