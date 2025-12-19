@@ -14,39 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      blog_posts: {
-        Row: {
-          content: string
-          created_at: string
-          id: string
-          image_alt: string | null
-          image_url: string | null
-          published: boolean
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: string
-          image_alt?: string | null
-          image_url?: string | null
-          published?: boolean
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: string
-          image_alt?: string | null
-          image_url?: string | null
-          published?: boolean
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
