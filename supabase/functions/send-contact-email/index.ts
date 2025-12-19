@@ -7,6 +7,69 @@ if (!RESEND_API_KEY) {
 }
 const resend = new Resend(RESEND_API_KEY);
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
+const MAX_REQUESTS_PER_WINDOW = 5; // Max 5 emails per IP per hour
+
+// In-memory rate limit store (resets on function cold start)
+const rateLimitStore = new Map<string, { count: number; windowStart: number }>();
+
+// Clean up old entries periodically
+const cleanupRateLimitStore = () => {
+  const now = Date.now();
+  for (const [key, value] of rateLimitStore.entries()) {
+    if (now - value.windowStart > RATE_LIMIT_WINDOW_MS) {
+      rateLimitStore.delete(key);
+    }
+  }
+};
+
+// Check rate limit for an IP
+const isRateLimited = (ip: string): { limited: boolean; remaining: number; resetIn: number } => {
+  cleanupRateLimitStore();
+  const now = Date.now();
+  const record = rateLimitStore.get(ip);
+
+  if (!record || now - record.windowStart > RATE_LIMIT_WINDOW_MS) {
+    // New window
+    rateLimitStore.set(ip, { count: 1, windowStart: now });
+    return { limited: false, remaining: MAX_REQUESTS_PER_WINDOW - 1, resetIn: RATE_LIMIT_WINDOW_MS };
+  }
+
+  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
+    const resetIn = RATE_LIMIT_WINDOW_MS - (now - record.windowStart);
+    return { limited: true, remaining: 0, resetIn };
+  }
+
+  record.count++;
+  return { 
+    limited: false, 
+    remaining: MAX_REQUESTS_PER_WINDOW - record.count, 
+    resetIn: RATE_LIMIT_WINDOW_MS - (now - record.windowStart) 
+  };
+};
+
+// Get client IP from request headers
+const getClientIP = (req: Request): string => {
+  // Check various headers for the real IP (in order of preference)
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    return forwardedFor.split(',')[0].trim();
+  }
+  
+  const realIP = req.headers.get('x-real-ip');
+  if (realIP) {
+    return realIP;
+  }
+  
+  const cfConnectingIP = req.headers.get('cf-connecting-ip');
+  if (cfConnectingIP) {
+    return cfConnectingIP;
+  }
+  
+  return 'unknown';
+};
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -24,11 +87,19 @@ interface ContactEmailRequest {
   name: string;
   email: string;
   message: string;
+  website?: string; // Honeypot field - should always be empty
 }
 
 // Input validation and sanitization
 const validateContactInput = (data: any): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
+
+  // Check honeypot field - if filled, it's likely a bot
+  if (data.website && data.website.trim().length > 0) {
+    console.log("Honeypot triggered - likely bot submission");
+    // Return silently valid to not reveal the honeypot
+    return { isValid: true, errors: [] };
+  }
 
   // Validate name
   if (!data.name || typeof data.name !== 'string') {
@@ -228,6 +299,32 @@ const handler = async (req: Request): Promise<Response> => {
     });
   }
 
+  // Get client IP for rate limiting
+  const clientIP = getClientIP(req);
+  console.log("Request from IP:", clientIP.substring(0, 8) + "***");
+
+  // Check rate limit
+  const rateLimitResult = isRateLimited(clientIP);
+  if (rateLimitResult.limited) {
+    console.log("Rate limit exceeded for IP:", clientIP.substring(0, 8) + "***");
+    const resetMinutes = Math.ceil(rateLimitResult.resetIn / 60000);
+    return new Response(
+      JSON.stringify({ 
+        error: "Too many requests. Please try again later.",
+        retryAfterMinutes: resetMinutes 
+      }), 
+      {
+        status: 429,
+        headers: { 
+          "Content-Type": "application/json", 
+          "Retry-After": String(Math.ceil(rateLimitResult.resetIn / 1000)),
+          ...corsHeaders, 
+          ...securityHeaders 
+        },
+      }
+    );
+  }
+
   try {
     // Parse and validate request body
     let requestData;
@@ -236,6 +333,16 @@ const handler = async (req: Request): Promise<Response> => {
     } catch {
       return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
         status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
+      });
+    }
+
+    // Check honeypot field - if filled, silently "succeed" without sending email
+    if (requestData.website && requestData.website.trim().length > 0) {
+      console.log("Honeypot triggered - bot submission blocked");
+      // Return success to not reveal the honeypot mechanism
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
         headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
       });
     }
@@ -255,7 +362,7 @@ const handler = async (req: Request): Promise<Response> => {
     const email = requestData.email.trim().toLowerCase();
     const message = sanitizeContent(requestData.message);
 
-    console.log("Sending contact emails for:", { name, email: email.substring(0, 3) + "***" });
+    console.log("Sending contact emails for:", { name, email: email.substring(0, 3) + "***", remainingRequests: rateLimitResult.remaining });
 
     // Send notification email to Beau
     console.log("Attempting to send notification email...");
