@@ -10,6 +10,7 @@ interface UseStrudelReturn {
   setVolume: (volume: number) => void;
   evaluatePattern: (pattern: string) => Promise<void>;
   strudelReady: boolean;
+  analyserNode: AnalyserNode | null;
 }
 
 declare global {
@@ -22,6 +23,7 @@ declare global {
     stack: any;
     silence: any;
     setcps: (cps: number) => void;
+    getAudioContext: () => AudioContext;
   }
 }
 
@@ -34,8 +36,10 @@ export const useStrudel = (): UseStrudelReturn => {
 
   const gainNodeRef = useRef<GainNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserNodeRef = useRef<AnalyserNode | null>(null);
   const currentPatternRef = useRef<string | null>(null);
   const replanRef = useRef<any>(null);
+  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
 
   // Initialize Strudel
   useEffect(() => {
@@ -61,6 +65,23 @@ export const useStrudel = (): UseStrudelReturn => {
             // Initialize Strudel after script loads
             if (window.initStrudel) {
               await window.initStrudel();
+
+              // Create AnalyserNode for visualization
+              if (window.getAudioContext) {
+                const audioCtx = window.getAudioContext();
+                audioContextRef.current = audioCtx;
+
+                const analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 2048;
+                analyser.smoothingTimeConstant = 0.8;
+
+                // Connect analyser to destination to capture all audio
+                analyser.connect(audioCtx.destination);
+
+                analyserNodeRef.current = analyser;
+                setAnalyserNode(analyser);
+              }
+
               setStrudelReady(true);
             } else {
               setError('Strudel initialization function not found');
@@ -201,5 +222,6 @@ export const useStrudel = (): UseStrudelReturn => {
     setVolume,
     evaluatePattern,
     strudelReady,
+    analyserNode,
   };
 };

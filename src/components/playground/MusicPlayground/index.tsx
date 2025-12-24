@@ -2,18 +2,21 @@ import { useState, useEffect } from 'react';
 import { PresetSelector } from './PresetSelector';
 import { PlaybackControls } from './PlaybackControls';
 import { HelpPanel } from './HelpPanel';
+import { AudioVisualizer } from './AudioVisualizer';
 import { useStrudel } from '@/hooks/useStrudel';
 import { musicPresets, MusicPreset } from '@/lib/music-presets';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, AlertCircle } from 'lucide-react';
+import { RefreshCw, AlertCircle, ChevronDown, ChevronUp, Code, Music } from 'lucide-react';
 
 export const MusicPlayground = () => {
-  const { isPlaying, isLoading, error, volume, play, stop, setVolume, evaluatePattern, strudelReady } =
+  const { isPlaying, isLoading, error, volume, play, stop, setVolume, evaluatePattern, strudelReady, analyserNode } =
     useStrudel();
 
   const [currentPattern, setCurrentPattern] = useState(musicPresets[0].pattern);
   const [selectedPreset, setSelectedPreset] = useState<MusicPreset>(musicPresets[0]);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showPresets, setShowPresets] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
 
   // Load pattern from localStorage on mount
   useEffect(() => {
@@ -74,20 +77,20 @@ export const MusicPlayground = () => {
   };
 
   return (
-    <div className="h-full w-full space-y-6 p-4 md:p-6">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl md:text-3xl font-bold">
+    <div className="h-full w-full flex flex-col p-4 md:p-6 gap-4">
+      {/* Compact Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl md:text-2xl font-bold">
           Music <span className="text-neon text-glow">Lab</span>
         </h2>
-        <p className="text-sm md:text-base text-gray-400 max-w-2xl mx-auto">
-          Create algorithmic music with code. Edit the pattern below and hear it change in real-time.
+        <p className="text-xs md:text-sm text-gray-500 hidden md:block">
+          Algorithmic music with code
         </p>
       </div>
 
       {/* Loading State */}
       {isLoading && (
-        <div className="flex items-center justify-center p-8">
+        <div className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-3">
             <div className="animate-spin h-8 w-8 border-4 border-neon border-t-transparent rounded-full mx-auto"></div>
             <p className="text-gray-400">Loading Strudel...</p>
@@ -100,96 +103,115 @@ export const MusicPlayground = () => {
         <>
           {/* Error Message */}
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-semibold text-red-400">Error</h4>
-                <p className="text-sm text-red-300">{error}</p>
-              </div>
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 flex items-start gap-3">
+              <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-300">{error}</p>
             </div>
           )}
 
-          {/* Playback Controls */}
-          <PlaybackControls
-            isPlaying={isPlaying}
-            volume={volume}
-            onPlay={play}
-            onStop={stop}
-            onVolumeChange={setVolume}
-            disabled={!strudelReady}
-          />
-
-          {/* Preset Selector */}
-          <PresetSelector
-            presets={musicPresets}
-            selectedPresetId={selectedPreset.id}
-            onSelectPreset={handlePresetSelect}
-          />
-
-          {/* Code Editor */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-neon">Pattern Editor</h3>
-              <div className="flex gap-2">
-                {hasChanges && (
-                  <Button
-                    onClick={handleResetToPreset}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs border-gray-700 text-gray-400 hover:text-gray-200"
-                  >
-                    <RefreshCw className="h-3 w-3 mr-1" />
-                    Reset to Preset
-                  </Button>
-                )}
-                <Button
-                  onClick={handleUpdatePattern}
-                  size="sm"
-                  className="text-xs bg-neon/20 hover:bg-neon/30 text-neon border border-neon/50"
-                >
-                  Update Pattern
-                </Button>
-              </div>
-            </div>
-
-            <div className="relative">
-              <textarea
-                value={currentPattern}
-                onChange={(e) => handlePatternChange(e.target.value)}
-                className="w-full h-64 md:h-80 p-4 bg-black/50 border border-gray-700 rounded-lg font-mono text-sm text-gray-300 focus:border-neon focus:outline-none resize-none"
-                placeholder="Enter your Strudel pattern here..."
-                spellCheck={false}
-              />
-              <div className="absolute bottom-2 right-2 text-xs text-gray-500">
-                Lines: {currentPattern.split('\n').length}
-              </div>
-            </div>
-
-            {/* Pattern Info */}
-            <div className="bg-dark-secondary/30 rounded-lg p-3 border border-gray-800">
-              <p className="text-xs text-gray-400">
-                <span className="text-neon font-semibold">Tip:</span> Patterns update automatically when you click
-                "Update Pattern". Press Play to hear your creation!
-              </p>
-            </div>
+          {/* HERO: Large Visualizer */}
+          <div className="flex-1 min-h-[300px] md:min-h-[400px]">
+            <AudioVisualizer isPlaying={isPlaying} analyserNode={analyserNode} />
           </div>
 
-          {/* Visualizer Placeholder */}
-          <div className="bg-dark-secondary/30 rounded-lg border border-gray-700 p-8 min-h-[200px] flex items-center justify-center">
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 text-gray-500">
-                {isPlaying ? (
-                  <>
-                    <div className="h-8 w-2 bg-neon animate-pulse"></div>
-                    <div className="h-12 w-2 bg-neon/70 animate-pulse" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="h-10 w-2 bg-neon/80 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="h-14 w-2 bg-neon animate-pulse" style={{ animationDelay: '0.3s' }}></div>
-                    <div className="h-8 w-2 bg-neon/60 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                  </>
+          {/* Playback Controls - Centered below visualizer */}
+          <div className="flex justify-center">
+            <PlaybackControls
+              isPlaying={isPlaying}
+              volume={volume}
+              onPlay={play}
+              onStop={stop}
+              onVolumeChange={setVolume}
+              disabled={!strudelReady}
+            />
+          </div>
+
+          {/* Collapsible Sections */}
+          <div className="space-y-2">
+            {/* Presets Section */}
+            <div className="border border-gray-800 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setShowPresets(!showPresets)}
+                className="w-full flex items-center justify-between p-3 bg-dark-secondary/30 hover:bg-dark-secondary/50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <Music className="h-4 w-4 text-neon" />
+                  <span className="text-sm font-medium">Presets</span>
+                  <span className="text-xs text-gray-500">({selectedPreset.name})</span>
+                </div>
+                {showPresets ? (
+                  <ChevronUp className="h-4 w-4 text-gray-400" />
                 ) : (
-                  <p className="text-gray-500">Visualizer will appear when playing</p>
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
                 )}
-              </div>
+              </button>
+              {showPresets && (
+                <div className="p-3 border-t border-gray-800">
+                  <PresetSelector
+                    presets={musicPresets}
+                    selectedPresetId={selectedPreset.id}
+                    onSelectPreset={handlePresetSelect}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Code Editor Section */}
+            <div className="border border-gray-800 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setShowEditor(!showEditor)}
+                className="w-full flex items-center justify-between p-3 bg-dark-secondary/30 hover:bg-dark-secondary/50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <Code className="h-4 w-4 text-neon" />
+                  <span className="text-sm font-medium">Pattern Editor</span>
+                  {hasChanges && (
+                    <span className="text-xs text-yellow-500">(modified)</span>
+                  )}
+                </div>
+                {showEditor ? (
+                  <ChevronUp className="h-4 w-4 text-gray-400" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                )}
+              </button>
+              {showEditor && (
+                <div className="p-3 border-t border-gray-800 space-y-3">
+                  <div className="flex items-center justify-end gap-2">
+                    {hasChanges && (
+                      <Button
+                        onClick={handleResetToPreset}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs border-gray-700 text-gray-400 hover:text-gray-200"
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Reset
+                      </Button>
+                    )}
+                    <Button
+                      onClick={handleUpdatePattern}
+                      size="sm"
+                      className="text-xs bg-neon/20 hover:bg-neon/30 text-neon border border-neon/50"
+                    >
+                      Update Pattern
+                    </Button>
+                  </div>
+
+                  <div className="relative">
+                    <textarea
+                      value={currentPattern}
+                      onChange={(e) => handlePatternChange(e.target.value)}
+                      className="w-full h-48 md:h-64 p-4 bg-black/50 border border-gray-700 rounded-lg font-mono text-sm text-gray-300 focus:border-neon focus:outline-none resize-none"
+                      placeholder="Enter your Strudel pattern here..."
+                      spellCheck={false}
+                    />
+                    <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+                      Lines: {currentPattern.split('\n').length}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
