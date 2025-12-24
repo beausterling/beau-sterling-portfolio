@@ -123,3 +123,16 @@
   background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
   background-size: 30px 30px;
 }
+
+/* Strudel scope canvas styling */
+#strudel-scope canvas {
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.4)) brightness(1.1);
+}
+
+#strudel-scope {
+  --scope-color: #00ff88;
+  --scope-bg: transparent;
+}

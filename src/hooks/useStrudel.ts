@@ -10,7 +10,6 @@ interface UseStrudelReturn {
   setVolume: (volume: number) => void;
   evaluatePattern: (pattern: string) => Promise<void>;
   strudelReady: boolean;
-  analyserNode: AnalyserNode | null;
 }
 
 declare global {
@@ -24,61 +23,9 @@ declare global {
     silence: any;
     setcps: (cps: number) => void;
     getAudioContext: () => AudioContext;
-    _strudelAnalyser?: AnalyserNode;
-    _strudelMasterGain?: GainNode;
+    webaudioOutput: GainNode;
+    scope: any;
   }
-}
-
-// Store original AudioContext constructor
-const OriginalAudioContext = typeof window !== 'undefined'
-  ? (window.AudioContext || (window as any).webkitAudioContext)
-  : null;
-
-// Flag to track if we've patched
-let audioContextPatched = false;
-
-// Patch AudioContext to intercept audio for visualization
-function patchAudioContext() {
-  if (audioContextPatched || !OriginalAudioContext) return;
-  audioContextPatched = true;
-
-  (window as any).AudioContext = function(...args: any[]) {
-    // Create real context
-    const ctx = new OriginalAudioContext(...args);
-
-    // Create analyser chain
-    const analyser = ctx.createAnalyser();
-    analyser.fftSize = 2048;
-    analyser.smoothingTimeConstant = 0.85;
-
-    const masterGain = ctx.createGain();
-    masterGain.gain.value = 1;
-
-    // Connect: masterGain -> analyser -> real destination
-    masterGain.connect(analyser);
-    analyser.connect(ctx.destination);
-
-    // Store globally so hook can access
-    window._strudelAnalyser = analyser;
-    window._strudelMasterGain = masterGain;
-
-    // Return proxy that redirects destination to our masterGain
-    return new Proxy(ctx, {
-      get(target, prop) {
-        if (prop === 'destination') {
-          return masterGain;
-        }
-        const value = (target as any)[prop];
-        if (typeof value === 'function') {
-          return value.bind(target);
-        }
-        return value;
-      }
-    });
-  };
-
-  // Also patch webkitAudioContext for Safari
-  (window as any).webkitAudioContext = (window as any).AudioContext;
 }
 
 export const useStrudel = (): UseStrudelReturn => {
@@ -88,12 +35,8 @@ export const useStrudel = (): UseStrudelReturn => {
   const [volume, setVolumeState] = useState(0.5);
   const [strudelReady, setStrudelReady] = useState(false);
 
-  const gainNodeRef = useRef<GainNode | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserNodeRef = useRef<AnalyserNode | null>(null);
   const currentPatternRef = useRef<string | null>(null);
   const replanRef = useRef<any>(null);
-  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
 
   // Initialize Strudel
   useEffect(() => {
@@ -103,25 +46,16 @@ export const useStrudel = (): UseStrudelReturn => {
 
         // Check if Strudel is already loaded
         if (typeof window !== 'undefined' && window.initStrudel) {
+          console.log('[Strudel] Already loaded, initializing...');
           await window.initStrudel();
-          // Get analyser from global if available
-          if (window._strudelAnalyser) {
-            setAnalyserNode(window._strudelAnalyser);
-            analyserNodeRef.current = window._strudelAnalyser;
-          }
-          if (window._strudelMasterGain) {
-            gainNodeRef.current = window._strudelMasterGain;
-          }
           setStrudelReady(true);
           setIsLoading(false);
+          console.log('[Strudel] Ready!');
           return;
         }
 
-        // CRITICAL: Patch AudioContext BEFORE loading the script
-        // This intercepts when superdough creates its AudioContext
-        patchAudioContext();
-
-        // Now load Strudel - when it creates AudioContext, it gets our patched version
+        // Load Strudel dynamically
+        console.log('[Strudel] Loading from CDN...');
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/@strudel/web@1.0.3';
         script.async = true;
@@ -129,40 +63,30 @@ export const useStrudel = (): UseStrudelReturn => {
         script.onload = async () => {
           try {
             if (window.initStrudel) {
-              // Initialize Strudel
+              console.log('[Strudel] Script loaded, initializing...');
               await window.initStrudel();
-
-              // Get audio context for ref FIRST so it's available for resume calls
-              if (window.getAudioContext) {
-                audioContextRef.current = window.getAudioContext();
-              }
-
-              // Get the analyser and gain from our patched constructor
-              if (window._strudelAnalyser) {
-                setAnalyserNode(window._strudelAnalyser);
-                analyserNodeRef.current = window._strudelAnalyser;
-              }
-              if (window._strudelMasterGain) {
-                gainNodeRef.current = window._strudelMasterGain;
-              }
-
               setStrudelReady(true);
+              console.log('[Strudel] Ready!');
             } else {
+              console.error('[Strudel] initStrudel not found after script load');
               setError('Strudel initialization function not found');
             }
           } catch (err) {
+            console.error('[Strudel] Init error:', err);
             setError('Failed to initialize Strudel audio');
           }
           setIsLoading(false);
         };
 
         script.onerror = () => {
+          console.error('[Strudel] Failed to load script');
           setError('Failed to load Strudel library');
           setIsLoading(false);
         };
 
         document.body.appendChild(script);
       } catch (err) {
+        console.error('[Strudel] Load error:', err);
         setError('Failed to initialize Strudel');
         setIsLoading(false);
       }
@@ -193,27 +117,40 @@ export const useStrudel = (): UseStrudelReturn => {
       setError(null);
 
       // Resume AudioContext if suspended (required by browser autoplay policy)
-      if (audioContextRef.current?.state === 'suspended') {
-        await audioContextRef.current.resume();
+      // Use window.getAudioContext() directly to get the current context
+      const ctx = window.getAudioContext?.();
+      console.log('[Strudel] AudioContext state:', ctx?.state);
+
+      if (ctx?.state === 'suspended') {
+        console.log('[Strudel] Resuming AudioContext...');
+        await ctx.resume();
+        console.log('[Strudel] AudioContext resumed:', ctx.state);
       }
 
       // Evaluate and play the pattern
       try {
+        console.log('[Strudel] Evaluating pattern:', currentPatternRef.current.substring(0, 50) + '...');
+
         // Use Function constructor to safely evaluate pattern code
         // The pattern code uses Strudel globals like note(), s(), etc.
         const evalPattern = new Function(`return ${currentPatternRef.current}`);
         const pattern = evalPattern();
 
         if (pattern && typeof pattern.play === 'function') {
+          console.log('[Strudel] Playing pattern...');
           replanRef.current = pattern.play();
           setIsPlaying(true);
+          console.log('[Strudel] Playback started');
         } else {
+          console.error('[Strudel] Invalid pattern - no play method');
           setError('Invalid pattern - must return a playable pattern');
         }
       } catch (evalErr: any) {
+        console.error('[Strudel] Pattern evaluation error:', evalErr);
         setError(`Pattern syntax error: ${evalErr.message}`);
       }
     } catch (err) {
+      console.error('[Strudel] Play error:', err);
       setError('Failed to start playback');
       setIsPlaying(false);
     }
@@ -221,6 +158,7 @@ export const useStrudel = (): UseStrudelReturn => {
 
   const stop = useCallback(() => {
     try {
+      console.log('[Strudel] Stopping playback...');
       // Use Strudel's hush() to stop all sounds
       if (window.hush) {
         window.hush();
@@ -229,7 +167,9 @@ export const useStrudel = (): UseStrudelReturn => {
       replanRef.current = null;
       setIsPlaying(false);
       setError(null);
+      console.log('[Strudel] Playback stopped');
     } catch (err) {
+      console.error('[Strudel] Stop error:', err);
       setError('Failed to stop playback');
     }
   }, []);
@@ -238,9 +178,9 @@ export const useStrudel = (): UseStrudelReturn => {
     const clampedVolume = Math.max(0, Math.min(1, newVolume));
     setVolumeState(clampedVolume);
 
-    // Apply volume through gain node if available
-    if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = clampedVolume;
+    // Apply volume through Strudel's output gain if available
+    if (window.webaudioOutput) {
+      window.webaudioOutput.gain.value = clampedVolume;
     }
   }, []);
 
@@ -258,14 +198,17 @@ export const useStrudel = (): UseStrudelReturn => {
 
       // If currently playing, restart with new pattern
       if (isPlaying) {
+        console.log('[Strudel] Switching pattern while playing...');
+
         // Stop current playback
         if (window.hush) {
           window.hush();
         }
 
-        // Resume AudioContext if suspended (required by browser autoplay policy)
-        if (audioContextRef.current?.state === 'suspended') {
-          await audioContextRef.current.resume();
+        // Resume AudioContext if suspended
+        const ctx = window.getAudioContext?.();
+        if (ctx?.state === 'suspended') {
+          await ctx.resume();
         }
 
         // Play new pattern
@@ -275,13 +218,16 @@ export const useStrudel = (): UseStrudelReturn => {
 
           if (newPattern && typeof newPattern.play === 'function') {
             replanRef.current = newPattern.play();
+            console.log('[Strudel] Pattern switched successfully');
           }
         } catch (evalErr: any) {
+          console.error('[Strudel] Pattern switch error:', evalErr);
           setError(`Pattern syntax error: ${evalErr.message}`);
           setIsPlaying(false);
         }
       }
     } catch (err) {
+      console.error('[Strudel] Evaluate error:', err);
       setError('Failed to evaluate pattern. Check syntax.');
     }
   }, [strudelReady, isPlaying]);
@@ -296,6 +242,5 @@ export const useStrudel = (): UseStrudelReturn => {
     setVolume,
     evaluatePattern,
     strudelReady,
-    analyserNode,
   };
 };
