@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BaseTrackSelector } from './PresetSelector';
+import { PresetSelector } from './PresetSelector';
 import { PlaybackControls } from './PlaybackControls';
 import { HelpPanel } from './HelpPanel';
 import { AudioVisualizer } from './AudioVisualizer';
@@ -131,11 +131,10 @@ export const MusicPlayground = () => {
                 <Music className="h-4 w-4 text-neon" />
                 <h3 className="text-sm font-semibold">Base Tracks</h3>
               </div>
-              <BaseTrackSelector
-                tracks={musicPresets}
-                selectedTrackId={selectedTrack.id}
-                onSelectTrack={handleTrackSelect}
-                compact
+              <PresetSelector
+                presets={musicPresets}
+                selectedPresetId={selectedTrack.id}
+                onSelectPreset={handleTrackSelect}
               />
             </div>
 
@@ -207,10 +206,10 @@ export const MusicPlayground = () => {
               </button>
               {showTracksOnMobile && (
                 <div className="p-3 border-t border-gray-800">
-                  <BaseTrackSelector
-                    tracks={musicPresets}
-                    selectedTrackId={selectedTrack.id}
-                    onSelectTrack={handleTrackSelect}
+                  <PresetSelector
+                    presets={musicPresets}
+                    selectedPresetId={selectedTrack.id}
+                    onSelectPreset={handleTrackSelect}
                   />
                 </div>
               )}
