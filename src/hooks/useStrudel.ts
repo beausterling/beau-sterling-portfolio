@@ -24,7 +24,61 @@ declare global {
     silence: any;
     setcps: (cps: number) => void;
     getAudioContext: () => AudioContext;
+    _strudelAnalyser?: AnalyserNode;
+    _strudelMasterGain?: GainNode;
   }
+}
+
+// Store original AudioContext constructor
+const OriginalAudioContext = typeof window !== 'undefined'
+  ? (window.AudioContext || (window as any).webkitAudioContext)
+  : null;
+
+// Flag to track if we've patched
+let audioContextPatched = false;
+
+// Patch AudioContext to intercept audio for visualization
+function patchAudioContext() {
+  if (audioContextPatched || !OriginalAudioContext) return;
+  audioContextPatched = true;
+
+  (window as any).AudioContext = function(...args: any[]) {
+    // Create real context
+    const ctx = new OriginalAudioContext(...args);
+
+    // Create analyser chain
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.85;
+
+    const masterGain = ctx.createGain();
+    masterGain.gain.value = 1;
+
+    // Connect: masterGain -> analyser -> real destination
+    masterGain.connect(analyser);
+    analyser.connect(ctx.destination);
+
+    // Store globally so hook can access
+    window._strudelAnalyser = analyser;
+    window._strudelMasterGain = masterGain;
+
+    // Return proxy that redirects destination to our masterGain
+    return new Proxy(ctx, {
+      get(target, prop) {
+        if (prop === 'destination') {
+          return masterGain;
+        }
+        const value = (target as any)[prop];
+        if (typeof value === 'function') {
+          return value.bind(target);
+        }
+        return value;
+      }
+    });
+  };
+
+  // Also patch webkitAudioContext for Safari
+  (window as any).webkitAudioContext = (window as any).AudioContext;
 }
 
 export const useStrudel = (): UseStrudelReturn => {
@@ -50,36 +104,46 @@ export const useStrudel = (): UseStrudelReturn => {
         // Check if Strudel is already loaded
         if (typeof window !== 'undefined' && window.initStrudel) {
           await window.initStrudel();
+          // Get analyser from global if available
+          if (window._strudelAnalyser) {
+            setAnalyserNode(window._strudelAnalyser);
+            analyserNodeRef.current = window._strudelAnalyser;
+          }
+          if (window._strudelMasterGain) {
+            gainNodeRef.current = window._strudelMasterGain;
+          }
           setStrudelReady(true);
           setIsLoading(false);
           return;
         }
 
-        // Load Strudel dynamically using @strudel/web
+        // CRITICAL: Patch AudioContext BEFORE loading the script
+        // This intercepts when superdough creates its AudioContext
+        patchAudioContext();
+
+        // Now load Strudel - when it creates AudioContext, it gets our patched version
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/@strudel/web@1.0.3';
         script.async = true;
 
         script.onload = async () => {
           try {
-            // Initialize Strudel after script loads
             if (window.initStrudel) {
+              // Initialize Strudel
               await window.initStrudel();
 
-              // Create AnalyserNode for visualization
+              // Get audio context for ref FIRST so it's available for resume calls
               if (window.getAudioContext) {
-                const audioCtx = window.getAudioContext();
-                audioContextRef.current = audioCtx;
+                audioContextRef.current = window.getAudioContext();
+              }
 
-                const analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 2048;
-                analyser.smoothingTimeConstant = 0.8;
-
-                // Connect analyser to destination to capture all audio
-                analyser.connect(audioCtx.destination);
-
-                analyserNodeRef.current = analyser;
-                setAnalyserNode(analyser);
+              // Get the analyser and gain from our patched constructor
+              if (window._strudelAnalyser) {
+                setAnalyserNode(window._strudelAnalyser);
+                analyserNodeRef.current = window._strudelAnalyser;
+              }
+              if (window._strudelMasterGain) {
+                gainNodeRef.current = window._strudelMasterGain;
               }
 
               setStrudelReady(true);
@@ -127,6 +191,11 @@ export const useStrudel = (): UseStrudelReturn => {
       }
 
       setError(null);
+
+      // Resume AudioContext if suspended (required by browser autoplay policy)
+      if (audioContextRef.current?.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
 
       // Evaluate and play the pattern
       try {
@@ -192,6 +261,11 @@ export const useStrudel = (): UseStrudelReturn => {
         // Stop current playback
         if (window.hush) {
           window.hush();
+        }
+
+        // Resume AudioContext if suspended (required by browser autoplay policy)
+        if (audioContextRef.current?.state === 'suspended') {
+          await audioContextRef.current.resume();
         }
 
         // Play new pattern
