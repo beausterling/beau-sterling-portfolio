@@ -14,8 +14,14 @@ interface UseStrudelReturn {
 
 declare global {
   interface Window {
-    strudel: any;
-    initStrudel: any;
+    initStrudel: () => Promise<void>;
+    hush: () => void;
+    note: any;
+    s: any;
+    n: any;
+    stack: any;
+    silence: any;
+    setcps: (cps: number) => void;
   }
 }
 
@@ -26,29 +32,42 @@ export const useStrudel = (): UseStrudelReturn => {
   const [volume, setVolumeState] = useState(0.5);
   const [strudelReady, setStrudelReady] = useState(false);
 
-  const audioContextRef = useRef<any>(null);
-  const currentPatternRef = useRef<any>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const currentPatternRef = useRef<string | null>(null);
+  const replanRef = useRef<any>(null);
 
   // Initialize Strudel
   useEffect(() => {
-    const initStrudel = async () => {
+    const loadStrudel = async () => {
       try {
         setIsLoading(true);
 
-        // Check if Strudel is loaded
-        if (typeof window !== 'undefined' && window.strudel) {
+        // Check if Strudel is already loaded
+        if (typeof window !== 'undefined' && window.initStrudel) {
+          await window.initStrudel();
           setStrudelReady(true);
           setIsLoading(false);
           return;
         }
 
-        // Load Strudel dynamically
+        // Load Strudel dynamically using @strudel/web
         const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@strudel.cycles/embed@0.4.0';
+        script.src = 'https://unpkg.com/@strudel/web@1.0.3';
         script.async = true;
 
-        script.onload = () => {
-          setStrudelReady(true);
+        script.onload = async () => {
+          try {
+            // Initialize Strudel after script loads
+            if (window.initStrudel) {
+              await window.initStrudel();
+              setStrudelReady(true);
+            } else {
+              setError('Strudel initialization function not found');
+            }
+          } catch (err) {
+            setError('Failed to initialize Strudel audio');
+          }
           setIsLoading(false);
         };
 
@@ -64,11 +83,13 @@ export const useStrudel = (): UseStrudelReturn => {
       }
     };
 
-    initStrudel();
+    loadStrudel();
 
     return () => {
-      // Cleanup
-      stop();
+      // Cleanup on unmount
+      if (window.hush) {
+        window.hush();
+      }
     };
   }, []);
 
@@ -79,13 +100,28 @@ export const useStrudel = (): UseStrudelReturn => {
         return;
       }
 
-      setError(null);
-      setIsPlaying(true);
+      if (!currentPatternRef.current) {
+        setError('No pattern to play');
+        return;
+      }
 
-      // If there's a current pattern, start it
-      if (currentPatternRef.current) {
-        // Strudel specific play logic will go here
-        console.log('Playing pattern');
+      setError(null);
+
+      // Evaluate and play the pattern
+      try {
+        // Use Function constructor to safely evaluate pattern code
+        // The pattern code uses Strudel globals like note(), s(), etc.
+        const evalPattern = new Function(`return ${currentPatternRef.current}`);
+        const pattern = evalPattern();
+
+        if (pattern && typeof pattern.play === 'function') {
+          replanRef.current = pattern.play();
+          setIsPlaying(true);
+        } else {
+          setError('Invalid pattern - must return a playable pattern');
+        }
+      } catch (evalErr: any) {
+        setError(`Pattern syntax error: ${evalErr.message}`);
       }
     } catch (err) {
       setError('Failed to start playback');
@@ -95,13 +131,14 @@ export const useStrudel = (): UseStrudelReturn => {
 
   const stop = useCallback(() => {
     try {
-      setIsPlaying(false);
-
-      // Stop current pattern
-      if (currentPatternRef.current) {
-        console.log('Stopping pattern');
-        currentPatternRef.current = null;
+      // Use Strudel's hush() to stop all sounds
+      if (window.hush) {
+        window.hush();
       }
+
+      replanRef.current = null;
+      setIsPlaying(false);
+      setError(null);
     } catch (err) {
       setError('Failed to stop playback');
     }
@@ -111,10 +148,9 @@ export const useStrudel = (): UseStrudelReturn => {
     const clampedVolume = Math.max(0, Math.min(1, newVolume));
     setVolumeState(clampedVolume);
 
-    // Apply volume to audio context if available
-    if (audioContextRef.current) {
-      // Strudel volume control will go here
-      console.log('Setting volume:', clampedVolume);
+    // Apply volume through gain node if available
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = clampedVolume;
     }
   }, []);
 
@@ -127,17 +163,33 @@ export const useStrudel = (): UseStrudelReturn => {
 
       setError(null);
 
-      // Store the pattern
+      // Store the pattern string
       currentPatternRef.current = pattern;
 
-      console.log('Evaluating pattern:', pattern);
+      // If currently playing, restart with new pattern
+      if (isPlaying) {
+        // Stop current playback
+        if (window.hush) {
+          window.hush();
+        }
 
-      // If playing, the pattern will be evaluated
-      // Actual Strudel evaluation will happen here
+        // Play new pattern
+        try {
+          const evalPattern = new Function(`return ${pattern}`);
+          const newPattern = evalPattern();
+
+          if (newPattern && typeof newPattern.play === 'function') {
+            replanRef.current = newPattern.play();
+          }
+        } catch (evalErr: any) {
+          setError(`Pattern syntax error: ${evalErr.message}`);
+          setIsPlaying(false);
+        }
+      }
     } catch (err) {
       setError('Failed to evaluate pattern. Check syntax.');
     }
-  }, [strudelReady]);
+  }, [strudelReady, isPlaying]);
 
   return {
     isPlaying,

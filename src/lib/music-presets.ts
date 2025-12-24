@@ -13,7 +13,7 @@ export const musicPresets: MusicPreset[] = [
     description: 'Slow, atmospheric pad sounds perfect for relaxation',
     category: 'ambient',
     pattern: `note("c3 eb3 g3 bb3")
-  .s("sine")
+  .sound("sine")
   .lpf(800)
   .delay(0.5)
   .room(0.8)
@@ -22,19 +22,24 @@ export const musicPresets: MusicPreset[] = [
   {
     id: 'basic-beat',
     name: 'Basic Beat',
-    description: 'Simple kick and snare pattern - great for beginners',
+    description: 'Simple rhythmic pattern with synthesis - great for beginners',
     category: 'beat',
-    pattern: `s("bd sd [~ bd] sd")
-  .bank("RolandTR808")`,
+    pattern: `stack(
+  note("c1 ~ c1 ~").sound("sine").lpf(200).gain(0.8),
+  note("~ e4 ~ e4").sound("square").lpf(2000).gain(0.3).decay(0.05)
+)`,
   },
   {
     id: 'glitchy-textures',
     name: 'Glitchy Textures',
     description: 'Experimental, generative sounds with random variations',
     category: 'experimental',
-    pattern: `s("~ [glitch:3 glitch:1]*2 ~ glitch:5")
-  .speed(rand.range(0.5, 2))
-  .pan(sine)`,
+    pattern: `note("c4 [e4 g4]*2 ~ b4")
+  .sound("square")
+  .lpf(sine.range(500, 3000).slow(2))
+  .pan(sine.slow(4))
+  .decay(0.1)
+  .delay(0.3)`,
   },
   {
     id: 'melodic-arpeggio',
@@ -43,7 +48,7 @@ export const musicPresets: MusicPreset[] = [
     category: 'melodic',
     pattern: `n("<0 2 4 7>*8")
   .scale("C:minor")
-  .s("sawtooth")
+  .sound("sawtooth")
   .lpf(sine.range(400, 4000).slow(8))
   .decay(0.1)
   .sustain(0)`,
@@ -51,12 +56,12 @@ export const musicPresets: MusicPreset[] = [
   {
     id: 'lofi-groove',
     name: 'Lo-fi Groove',
-    description: 'Warm, vinyl-style beat with melodic elements',
+    description: 'Warm, mellow beat with melodic elements',
     category: 'lofi',
     pattern: `stack(
-  s("bd ~ bd ~").bank("RolandTR808"),
-  s("~ sd ~ sd").bank("RolandTR808").room(0.3),
-  n("0 3 7 5").scale("C:minor").s("piano").lpf(2000)
+  note("c2 ~ c2 ~").sound("triangle").lpf(300).gain(0.7),
+  note("~ g3 ~ g3").sound("sine").decay(0.1).gain(0.4),
+  n("0 3 7 5").scale("C:minor").sound("sine").lpf(2000).gain(0.5)
 ).slow(2)`,
   },
   {
@@ -65,7 +70,7 @@ export const musicPresets: MusicPreset[] = [
     description: 'Ethereal, evolving textures that fill the space',
     category: 'ambient',
     pattern: `note("<c3 eb3 g3> <d3 f3 a3> <e3 g3 b3>")
-  .s("sawtooth")
+  .sound("sawtooth")
   .lpf(sine.range(200, 2000).slow(16))
   .room(0.9)
   .delay(0.7)

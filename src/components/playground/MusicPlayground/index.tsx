@@ -41,6 +41,13 @@ export const MusicPlayground = () => {
     }
   }, [currentPattern, selectedPreset.id, hasChanges]);
 
+  // Evaluate pattern when Strudel is ready or pattern changes
+  useEffect(() => {
+    if (strudelReady && currentPattern) {
+      evaluatePattern(currentPattern);
+    }
+  }, [strudelReady, currentPattern, evaluatePattern]);
+
   const handlePresetSelect = (preset: MusicPreset) => {
     setSelectedPreset(preset);
     setCurrentPattern(preset.pattern);
