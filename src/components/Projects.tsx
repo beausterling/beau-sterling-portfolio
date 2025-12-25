@@ -4,7 +4,7 @@ import ProjectCard from './ProjectCard';
 const Projects = () => {
   const projects = [
     {
-      title: "IdeasCower",
+      title: "ideascower.com",
       description: "A satirical 'anti-incubator' web app that uses AI to humorously critique and deconstruct startup ideas. Featuring a dark cyberpunk aesthetic with custom animations, it generates daily 'doomed' startup concepts and provides entertaining fatal flaw analyses powered by Google Gemini.",
       image: "/lovable-uploads/ideascower.png",
       technologies: ["React", "TypeScript", "Vite", "TailwindCSS", "Supabase", "Google Gemini", "Deno"],
