@@ -47,7 +47,7 @@ export const PresetSelector = ({ presets, selectedPresetId, onSelectPreset }: Pr
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-semibold text-neon">Choose a Preset</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         {presets.map((preset) => {
           const isSelected = preset.id === selectedPresetId;
 
@@ -55,24 +55,26 @@ export const PresetSelector = ({ presets, selectedPresetId, onSelectPreset }: Pr
             <Card
               key={preset.id}
               onClick={() => onSelectPreset(preset)}
-              className={`p-4 cursor-pointer transition-all duration-200 hover:scale-105 ${
+              className={`p-3 cursor-pointer transition-all duration-200 hover:scale-[1.02] ${
                 isSelected
                   ? 'bg-neon/10 border-neon shadow-lg shadow-neon/20'
                   : 'bg-dark-secondary/50 border-gray-700 hover:border-neon/50'
               }`}
             >
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <h4 className={`font-semibold text-sm ${isSelected ? 'text-neon' : 'text-gray-200'}`}>
-                  {preset.name}
-                </h4>
-                <Badge className={`${getCategoryColor(preset.category)} border px-2 py-0.5`}>
-                  <span className="flex items-center gap-1">
-                    {getCategoryIcon(preset.category)}
-                    <span className="text-xs capitalize">{preset.category}</span>
-                  </span>
-                </Badge>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className={`font-semibold text-sm ${isSelected ? 'text-neon' : 'text-gray-200'}`}>
+                    {preset.name}
+                  </h4>
+                  <Badge className={`${getCategoryColor(preset.category)} border px-1.5 py-0.5 flex-shrink-0`}>
+                    <span className="flex items-center gap-1">
+                      {getCategoryIcon(preset.category)}
+                      <span className="text-[10px] capitalize">{preset.category}</span>
+                    </span>
+                  </Badge>
+                </div>
+                <p className="text-xs text-gray-400 line-clamp-2">{preset.description}</p>
               </div>
-              <p className="text-xs text-gray-400">{preset.description}</p>
             </Card>
           );
         })}
