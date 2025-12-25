@@ -294,7 +294,7 @@ export const AudioVisualizer = ({ isPlaying }: AudioVisualizerProps) => {
   }, []);
 
   return (
-    <div className="relative w-full h-full min-h-[300px] rounded-xl overflow-hidden border border-gray-800 bg-[#0a0a0f]">
+    <div className="relative w-full h-full min-h-[180px] md:min-h-[300px] rounded-xl overflow-hidden border border-gray-800 bg-[#0a0a0f]">
       <canvas
         ref={canvasRef}
         className="w-full h-full absolute inset-0"

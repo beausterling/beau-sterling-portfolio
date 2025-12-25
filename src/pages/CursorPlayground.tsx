@@ -27,7 +27,7 @@ const CursorPlayground = () => {
     <div className="relative w-screen h-screen bg-black overflow-hidden">
       {/* Header with Back button and Navigation Tabs */}
       <div className="absolute top-0 left-0 right-0 z-50 bg-dark-secondary/90 backdrop-blur-md border-b border-gray-700">
-        <div className="container mx-auto px-3 md:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="container mx-auto px-3 md:px-6 py-3 flex flex-row items-center justify-between gap-3">
           {/* Back Button */}
           <Link to="/" className="cursor-auto">
             <button className="flex items-center gap-1 md:gap-2 px-3 py-2 bg-dark-secondary/80 backdrop-blur-sm text-gray-200 rounded-lg hover:bg-dark-secondary hover:text-neon transition-colors border border-gray-700 cursor-pointer text-sm">
@@ -37,7 +37,7 @@ const CursorPlayground = () => {
             </button>
           </Link>
 
-          {/* Title - Hidden on mobile when tabs are visible */}
+          {/* Title - Hidden on mobile */}
           <div className="hidden sm:block text-center flex-1">
             <h1 className="text-xl md:text-2xl font-bold">
               <span className="text-neon text-glow">Playground</span>
@@ -49,15 +49,17 @@ const CursorPlayground = () => {
             <TabsList className="bg-dark/80 border border-gray-700">
               <TabsTrigger
                 value="cursor"
-                className="data-[state=active]:bg-neon data-[state=active]:text-dark text-gray-300 cursor-pointer"
+                className="data-[state=active]:bg-neon data-[state=active]:text-dark text-gray-300 cursor-pointer text-xs sm:text-sm px-2 sm:px-3"
               >
-                Cursor Effects
+                <span className="hidden sm:inline">Cursor Effects</span>
+                <span className="sm:hidden">Cursor</span>
               </TabsTrigger>
               <TabsTrigger
                 value="music"
-                className="data-[state=active]:bg-neon data-[state=active]:text-dark text-gray-300 cursor-pointer"
+                className="data-[state=active]:bg-neon data-[state=active]:text-dark text-gray-300 cursor-pointer text-xs sm:text-sm px-2 sm:px-3"
               >
-                Music Lab
+                <span className="hidden sm:inline">Music Lab</span>
+                <span className="sm:hidden">Music</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>

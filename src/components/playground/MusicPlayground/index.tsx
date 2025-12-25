@@ -74,7 +74,7 @@ export const MusicPlayground = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col p-4 md:p-6 pb-8 md:pb-12 gap-4">
+    <div className="h-full w-full flex flex-col p-4 md:p-6 pb-16 md:pb-20 gap-4">
       {/* Compact Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl md:text-2xl font-bold">
@@ -107,18 +107,16 @@ export const MusicPlayground = () => {
           )}
 
           {/* HERO: Large Visualizer - Strudel's scope renders here */}
-          <div className="flex-1 min-h-[250px] md:min-h-[350px]">
+          <div className="flex-none h-[200px] md:flex-1 md:min-h-[350px]">
             <AudioVisualizer isPlaying={isPlaying} />
           </div>
 
-          {/* Playback Controls - Centered below visualizer */}
-          <div className="flex justify-center">
+          {/* Playback Controls - Centered below visualizer with spacing */}
+          <div className="mt-4 md:mt-6">
             <PlaybackControls
               isPlaying={isPlaying}
-              volume={volume}
               onPlay={play}
               onStop={stop}
-              onVolumeChange={setVolume}
               disabled={!strudelReady}
             />
           </div>
