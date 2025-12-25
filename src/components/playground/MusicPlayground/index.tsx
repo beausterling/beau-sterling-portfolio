@@ -274,6 +274,9 @@ export const MusicPlayground = () => {
 
           {/* Help Panel */}
           <HelpPanel />
+
+          {/* Bottom spacer for mobile to ensure content doesn't touch bottom edge */}
+          <div className="h-8 md:h-12 flex-shrink-0" />
         </>
       )}
     </div>
