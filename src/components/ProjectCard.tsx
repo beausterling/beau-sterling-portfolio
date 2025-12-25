@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ExternalLink, Github } from 'lucide-react';
+import { ExternalLink, Github, Globe } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface ProjectCardProps {
@@ -11,6 +11,7 @@ interface ProjectCardProps {
   technologies: string[];
   liveDemoUrl?: string;
   githubUrl?: string;
+  websiteUrl?: string;
   reverse?: boolean;
   isVideo?: boolean;
 }
@@ -22,6 +23,7 @@ const ProjectCard = ({
   technologies,
   liveDemoUrl,
   githubUrl,
+  websiteUrl,
   reverse = false,
   isVideo = false,
 }: ProjectCardProps) => {
@@ -123,8 +125,8 @@ const ProjectCard = ({
                 </a>
               )}
               
-              {githubUrl && (
-                <a 
+              {githubUrl && githubUrl !== "#" && (
+                <a
                   href={githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -132,6 +134,18 @@ const ProjectCard = ({
                 >
                   <Github size={16} />
                   Source Code
+                </a>
+              )}
+
+              {websiteUrl && (
+                <a
+                  href={websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-gray-300 hover:text-neon transition-colors"
+                >
+                  <Globe size={16} />
+                  Website
                 </a>
               )}
             </div>

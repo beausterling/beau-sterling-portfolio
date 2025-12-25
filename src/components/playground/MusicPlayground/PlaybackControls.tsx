@@ -1,4 +1,4 @@
-import { Play, Pause, Volume2 } from 'lucide-react';
+import { Play, Square, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 
@@ -34,7 +34,7 @@ export const PlaybackControls = ({
       >
         {isPlaying ? (
           <>
-            <Pause className="mr-2 h-5 w-5" />
+            <Square className="mr-2 h-4 w-4" fill="currentColor" />
             Stop
           </>
         ) : (

@@ -74,7 +74,7 @@ export const MusicPlayground = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col p-4 md:p-6 gap-4">
+    <div className="h-full w-full flex flex-col p-4 md:p-6 pb-8 md:pb-12 gap-4">
       {/* Compact Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl md:text-2xl font-bold">

@@ -4,6 +4,16 @@ import ProjectCard from './ProjectCard';
 const Projects = () => {
   const projects = [
     {
+      title: "ShopWell - Chrome Extension",
+      description: "A free Chrome extension that helps people with chronic conditions shop safely online by using on-device AI to analyze product ingredients, allergens, and materials on Amazon and Walmart. Built for the chronic illness community, it provides condition-aware analysis for POTS, ME/CFS, and Celiac Disease while scanning for nine major allergens—all with guaranteed privacy since processing happens locally on your device.",
+      image: "/lovable-uploads/shop-well.png",
+      technologies: ["Chrome-AI", "JavaScript", "Node.js", "Google Cloud Functions", "Google Sheets API", "esbuild", "Netlify"],
+      liveDemoUrl: "https://youtu.be/7qUNzIpvn9U?si=l88PY6CmemLe3m_V",
+      githubUrl: "https://github.com/beausterling/shop-well-extension",
+      websiteUrl: "https://shopwell-extension.com/",
+      isVideo: true,
+    },
+    {
       title: "MyFutrSelf",
       description: "An AI Accountability app that allows users to talk to their future self who is designed to keep them accountable to their goals. The app creates personalized conversations with your future self to help maintain motivation and track progress towards your aspirations.",
       image: "/lovable-uploads/b83d40ad-af6e-4c22-9abf-96712d97b931.png",
