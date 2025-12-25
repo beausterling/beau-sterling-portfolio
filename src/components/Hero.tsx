@@ -20,7 +20,7 @@ const Hero = () => {
           
           <p className="text-lg md:text-xl text-gray-300 mb-8 opacity-0 animate-fade-in" style={{
           animationDelay: '400ms'
-        }}>With expert knowledge in frontend engineering, AI automation, and app development, I deliver quality results that help startups and small businesses succeed in today's digital landscape.</p>
+        }}>I build and ship full-stack prototypes <em>fast</em>. I also create films with AI.</p>
           
           <div className="flex flex-wrap gap-4 opacity-0 animate-fade-in" style={{
           animationDelay: '600ms'

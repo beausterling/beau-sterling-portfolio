@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ExternalLink, Github, Globe } from 'lucide-react';
+import { ExternalLink, Github, Globe, Code2 } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface ProjectCardProps {
@@ -10,10 +10,13 @@ interface ProjectCardProps {
   image: string;
   technologies: string[];
   liveDemoUrl?: string;
+  liveDemoLabel?: string;
   githubUrl?: string;
   websiteUrl?: string;
+  hackathonUrl?: string;
   reverse?: boolean;
   isVideo?: boolean;
+  embedVideo?: boolean;
 }
 
 const ProjectCard = ({
@@ -22,20 +25,39 @@ const ProjectCard = ({
   image,
   technologies,
   liveDemoUrl,
+  liveDemoLabel = "Live Demo",
   githubUrl,
   websiteUrl,
+  hackathonUrl,
   reverse = false,
   isVideo = false,
+  embedVideo = false,
 }: ProjectCardProps) => {
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
   
-  // Check if the URL is from Loom
+  // Check if the URL is from Loom or YouTube
   const isLoomVideo = liveDemoUrl?.includes('loom.com');
-  
+  const isYouTubeVideo = liveDemoUrl?.includes('youtu.be') || liveDemoUrl?.includes('youtube.com');
+  // If embedVideo is true, show in dialog; otherwise open in new tab for Loom/YouTube
+  const shouldOpenInNewTab = !embedVideo && (isLoomVideo || isYouTubeVideo);
+
+  // Convert Loom share URL to embed URL
+  const getEmbedUrl = () => {
+    if (!liveDemoUrl) return '';
+    if (isLoomVideo) {
+      // Convert loom.com/share/ID to loom.com/embed/ID
+      return liveDemoUrl.replace('/share/', '/embed/').split('?')[0];
+    }
+    return liveDemoUrl;
+  };
+
   const handleImageClick = () => {
     if (isVideo && liveDemoUrl) {
-      // For Loom videos, open in new tab
-      if (isLoomVideo) {
+      if (embedVideo) {
+        // Show embedded video in dialog
+        setVideoDialogOpen(true);
+      } else if (shouldOpenInNewTab) {
+        // Open in new tab
         window.open(liveDemoUrl, '_blank', 'noopener,noreferrer');
       } else {
         // For other videos, show dialog
@@ -43,17 +65,20 @@ const ProjectCard = ({
       }
     } else if (liveDemoUrl) {
       window.open(liveDemoUrl, '_blank', 'noopener,noreferrer');
+    } else if (websiteUrl) {
+      // Fallback to website if no liveDemoUrl
+      window.open(websiteUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
   const handleDemoClick = (e: React.MouseEvent) => {
     if (isVideo) {
       e.preventDefault();
-      // For Loom videos, open in new tab
-      if (isLoomVideo) {
+      if (embedVideo) {
+        setVideoDialogOpen(true);
+      } else if (shouldOpenInNewTab) {
         window.open(liveDemoUrl, '_blank', 'noopener,noreferrer');
       } else {
-        // For other videos, show dialog
         setVideoDialogOpen(true);
       }
     }
@@ -117,11 +142,11 @@ const ProjectCard = ({
                   href={liveDemoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={isVideo && !isLoomVideo ? handleDemoClick : undefined}
+                  onClick={isVideo && !shouldOpenInNewTab ? handleDemoClick : undefined}
                   className="flex items-center gap-2 text-sm text-gray-300 hover:text-neon transition-colors"
                 >
                   <ExternalLink size={16} />
-                  Live Demo
+                  {liveDemoLabel}
                 </a>
               )}
               
@@ -148,19 +173,32 @@ const ProjectCard = ({
                   Website
                 </a>
               )}
+
+              {hackathonUrl && (
+                <a
+                  href={hackathonUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-gray-300 hover:text-neon transition-colors"
+                >
+                  <Code2 size={16} />
+                  Hackathon
+                </a>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Video Dialog - only for non-Loom videos */}
+      {/* Video Dialog */}
       <Dialog open={videoDialogOpen} onOpenChange={setVideoDialogOpen}>
         <DialogContent className="max-w-4xl bg-dark-secondary border-gray-800">
           <div className="aspect-video w-full">
-            <iframe 
-              src={isVideo && !isLoomVideo ? liveDemoUrl : ""}
-              frameBorder="0" 
+            <iframe
+              src={videoDialogOpen ? getEmbedUrl() : ""}
+              frameBorder="0"
               allowFullScreen
+              allow="autoplay; fullscreen"
               className="w-full h-full"
             ></iframe>
           </div>
