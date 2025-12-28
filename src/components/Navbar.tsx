@@ -28,7 +28,7 @@ const Navbar = () => {
     { name: 'Films', href: '#films' },
     { name: 'About', href: '#about' },
     // { name: 'Blog', href: '/blog' },
-    { name: 'Playground', href: '/cursor-playground' },
+    { name: 'Playground', href: '/playground' },
     { name: 'Contact', href: '#contact' },
   ];
 

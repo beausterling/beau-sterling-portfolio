@@ -6,7 +6,7 @@ const Projects = () => {
     {
       title: "ideascower.com",
       description: "A satirical 'anti-incubator' web app that uses AI to humorously critique and deconstruct startup ideas. Featuring a dark cyberpunk aesthetic with custom animations, it generates daily 'doomed' startup concepts and provides entertaining fatal flaw analyses powered by Google Gemini.",
-      image: "/lovable-uploads/ideascower.png",
+      image: "/assets/ideascower.png",
       technologies: ["React", "TypeScript", "Vite", "TailwindCSS", "Supabase", "Google Gemini", "Deno"],
       websiteUrl: "https://ideascower.com/",
       githubUrl: "https://github.com/beausterling/ideascower",
@@ -14,7 +14,7 @@ const Projects = () => {
     {
       title: "ShopWell - Chrome Extension",
       description: "A free Chrome extension that helps people with chronic conditions shop safely online by using on-device AI to analyze product ingredients, allergens, and materials on Amazon and Walmart. Built for the chronic illness community, it provides condition-aware analysis for POTS, ME/CFS, and Celiac Disease while scanning for nine major allergens—all with guaranteed privacy since processing happens locally on your device.",
-      image: "/lovable-uploads/shop-well.png",
+      image: "/assets/shop-well.png",
       technologies: ["Chrome-AI", "JavaScript", "Node.js", "Google Cloud Functions", "Google Sheets API", "esbuild", "Netlify"],
       liveDemoUrl: "https://youtu.be/7qUNzIpvn9U?si=l88PY6CmemLe3m_V",
       githubUrl: "https://github.com/beausterling/shop-well-extension",
@@ -25,7 +25,7 @@ const Projects = () => {
     {
       title: "MyFutrSelf",
       description: "An AI Accountability app that allows users to talk to their future self who is designed to keep them accountable to their goals. The app creates personalized conversations with your future self to help maintain motivation and track progress towards your aspirations.",
-      image: "/lovable-uploads/b83d40ad-af6e-4c22-9abf-96712d97b931.png",
+      image: "/assets/b83d40ad-af6e-4c22-9abf-96712d97b931.png",
       technologies: ["React", "TypeScript", "Vite", "TailwindCSS", "Supabase", "OpenAI", "ElevenLabs", "Clerk"],
       liveDemoUrl: "https://youtu.be/a5tNo3M3Lv0",
       liveDemoLabel: "Teaser",
@@ -37,7 +37,7 @@ const Projects = () => {
     {
       title: "VibeCheck-It",
       description: "A messaging analysis platform, that helps users understand their communication patterns and improve digital relationships across different channels. It includes a free demo on the home page and paid reports. The next phase will be a MacOS desktop app that integrates with iMessage and other messaging platforms.",
-      image: "/lovable-uploads/3b170fdd-53d9-4427-ae77-525fda6f775b.png",
+      image: "/assets/3b170fdd-53d9-4427-ae77-525fda6f775b.png",
       technologies: ["Vite", "TypeScript", "React", "TailwindCSS", "OpenAI", "Supabase"],
       liveDemoUrl: "https://www.youtube.com/watch?v=EDiJC-QUxVc&t=137",
       websiteUrl: "https://vibecheckit.com/",
@@ -47,7 +47,7 @@ const Projects = () => {
     {
       title: "Sales-Maxing",
       description: "An AI-powered sales analytics platform that helps small businesses optimize their sales processes. The main feature is a call interface that records your conversation with the client or prospect, transcribes the audio, sends the conversation to Anthropic for analysis, and gets back a detailed feedback summary within seconds. The MVP for this was created for a 24-hour hackathon competition.",
-      image: "/lovable-uploads/cbf30c20-d99b-4e9f-be19-822329622344.png",
+      image: "/assets/cbf30c20-d99b-4e9f-be19-822329622344.png",
       technologies: ["React", "TypeScript", "ElevenLabs", "Anthropic", "Supabase", "Lovable"],
       liveDemoUrl: "https://www.loom.com/share/14c492efe1df474285bcfc1fdb4abd34",
       websiteUrl: "https://sales-maxing.lovable.app/",
@@ -58,7 +58,7 @@ const Projects = () => {
     {
       title: "Moon Rhythms",
       description: "A wellness application that syncs users' self-care routines with lunar cycles. This app is not fully developed yet, but will take users birth data, generate complete astrological human design profiles, and use that data to inform a highly personalized life coach and relationship advisor.",
-      image: "/lovable-uploads/cb80639d-ec36-4ec6-b58f-0b6ab2fece1e.png",
+      image: "/assets/cb80639d-ec36-4ec6-b58f-0b6ab2fece1e.png",
       technologies: ["React Native", "Node.js", "Supabase", "Lovable"],
       websiteUrl: "https://moonrhythms.io/",
       githubUrl: "#",
