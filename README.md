@@ -1,73 +1,59 @@
-# Welcome to your Lovable project
+# Beau Sterling - Portfolio
 
-## Project info
+Personal portfolio showcasing my full-stack web applications and AI-powered projects.
 
-**URL**: https://lovable.dev/projects/66e97897-ae30-477c-9164-8c49cf711cc2
+**Live Site:** [beausterling.xyz](https://beausterling.xyz/)
 
-## How can I edit this code?
+## Tech Stack
 
-There are several ways of editing your application.
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS + shadcn/ui
+- Supabase (database, edge functions)
+- Various AI APIs (OpenAI, Anthropic, Google Gemini, ElevenLabs)
 
-**Use Lovable**
+## Featured Projects
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/66e97897-ae30-477c-9164-8c49cf711cc2) and start prompting.
+### [ideascower.com](https://ideascower.com)
+Satirical "anti-incubator" that uses Google Gemini to roast startup ideas. 
+Dark cyberpunk UI with custom animations. Parody of ideabrowser.com
 
-Changes made via Lovable will be committed automatically to this repo.
+### [ShopWell Chrome Extension](https://shopwell-extension.com)
+Privacy-first shopping assistant for people with chronic conditions. 
+Uses Chrome's on-device AI to analyze ingredients and allergens on Amazon/Walmart without sending data to external servers.
 
-**Use your preferred IDE**
+### [MyFutrSelf](https://myfutrself.com)
+AI accountability app where you talk to your future self. 
+Built with OpenAI + ElevenLabs for voice synthesis.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### [VibeCheck-It](https://vibecheckit.com)
+Messaging analysis platform that helps users understand their communication patterns. 
+Free demo on homepage, paid reports available.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### [Sales-Maxing](https://sales-maxing.lovable.app)
+Sales call analyzer - records conversations, transcribes via ElevenLabs, analyzes with Anthropic's Claude, returns feedback in seconds. 
+Built in 24 hours for a hackathon.
 
-Follow these steps:
+### [Moon Rhythms](https://moonrhythms.io)
+Personal astrology app syncing self-care routines with lunar cycles (in development).
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Playground
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+The site includes an interactive playground at `/playground` with:
+- **Cursor Effects** - Visual cursor trail experiments
+- **Music Lab** - Audio generation and manipulation tools
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Local Development
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Contact
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **Email:** beaujsterling@gmail.com
+- **GitHub:** [@beausterling](https://github.com/beausterling)
+- **LinkedIn:** [beausterling](https://linkedin.com/in/beausterling)
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/66e97897-ae30-477c-9164-8c49cf711cc2) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Or use the contact form on the site.
