@@ -1,11 +1,7 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
+import { Handler } from '@netlify/functions';
+import { Resend } from 'resend';
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-if (!RESEND_API_KEY) {
-  console.error("FATAL: RESEND_API_KEY environment variable is not set!");
-}
-const resend = new Resend(RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
@@ -31,7 +27,6 @@ const isRateLimited = (ip: string): { limited: boolean; remaining: number; reset
   const record = rateLimitStore.get(ip);
 
   if (!record || now - record.windowStart > RATE_LIMIT_WINDOW_MS) {
-    // New window
     rateLimitStore.set(ip, { count: 1, windowStart: now });
     return { limited: false, remaining: MAX_REQUESTS_PER_WINDOW - 1, resetIn: RATE_LIMIT_WINDOW_MS };
   }
@@ -42,62 +37,20 @@ const isRateLimited = (ip: string): { limited: boolean; remaining: number; reset
   }
 
   record.count++;
-  return { 
-    limited: false, 
-    remaining: MAX_REQUESTS_PER_WINDOW - record.count, 
-    resetIn: RATE_LIMIT_WINDOW_MS - (now - record.windowStart) 
+  return {
+    limited: false,
+    remaining: MAX_REQUESTS_PER_WINDOW - record.count,
+    resetIn: RATE_LIMIT_WINDOW_MS - (now - record.windowStart)
   };
 };
 
-// Get client IP from request headers
-const getClientIP = (req: Request): string => {
-  // Check various headers for the real IP (in order of preference)
-  const forwardedFor = req.headers.get('x-forwarded-for');
-  if (forwardedFor) {
-    return forwardedFor.split(',')[0].trim();
-  }
-  
-  const realIP = req.headers.get('x-real-ip');
-  if (realIP) {
-    return realIP;
-  }
-  
-  const cfConnectingIP = req.headers.get('cf-connecting-ip');
-  if (cfConnectingIP) {
-    return cfConnectingIP;
-  }
-  
-  return 'unknown';
-};
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
-
-const securityHeaders = {
-  "X-Content-Type-Options": "nosniff",
-  "X-Frame-Options": "DENY",
-  "X-XSS-Protection": "1; mode=block",
-  "Referrer-Policy": "strict-origin-when-cross-origin",
-};
-
-interface ContactEmailRequest {
-  name: string;
-  email: string;
-  message: string;
-  website?: string; // Honeypot field - should always be empty
-}
-
-// Input validation and sanitization
+// Input validation
 const validateContactInput = (data: any): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
 
-  // Check honeypot field - if filled, it's likely a bot
+  // Check honeypot field
   if (data.website && data.website.trim().length > 0) {
     console.log("Honeypot triggered - likely bot submission");
-    // Return silently valid to not reveal the honeypot
     return { isValid: true, errors: [] };
   }
 
@@ -119,8 +72,8 @@ const validateContactInput = (data: any): { isValid: boolean; errors: string[] }
   // Validate message
   if (!data.message || typeof data.message !== 'string') {
     errors.push('Message is required and must be a string');
-  } else if (data.message.trim().length < 10 || data.message.trim().length > 5000) {
-    errors.push('Message must be between 10 and 5000 characters');
+  } else if (data.message.trim().length < 1 || data.message.trim().length > 5000) {
+    errors.push('Message is required');
   }
 
   return { isValid: errors.length === 0, errors };
@@ -130,12 +83,12 @@ const validateContactInput = (data: any): { isValid: boolean; errors: string[] }
 const sanitizeContent = (content: string): string => {
   return content
     .trim()
-    .replace(/[<>]/g, '') // Remove potential HTML tags
-    .replace(/javascript:/gi, '') // Remove javascript: protocol
-    .replace(/on\w+\s*=/gi, ''); // Remove event handlers
+    .replace(/[<>]/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '');
 };
 
-// Clean notification email template for Beau
+// Notification email template for Beau
 const createNotificationEmail = (name: string, email: string, message: string) => `
 <!DOCTYPE html>
 <html>
@@ -151,7 +104,7 @@ const createNotificationEmail = (name: string, email: string, message: string) =
       <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600;">New Contact Form Submission</h1>
       <p style="margin: 10px 0 0 0; color: #e2e8f0; font-size: 16px;">Beau Sterling - Frontend Engineer</p>
     </div>
-    
+
     <!-- Content -->
     <div style="padding: 30px;">
       <div style="border-left: 4px solid #2563eb; padding-left: 20px; margin-bottom: 25px;">
@@ -159,7 +112,7 @@ const createNotificationEmail = (name: string, email: string, message: string) =
         <p style="margin: 8px 0; line-height: 1.5; color: #475569;"><strong style="color: #1e293b;">Name:</strong> ${name}</p>
         <p style="margin: 8px 0; line-height: 1.5; color: #475569;"><strong style="color: #1e293b;">Email:</strong> ${email}</p>
       </div>
-      
+
       <div style="border-left: 4px solid #2563eb; padding-left: 20px;">
         <h2 style="color: #334155; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">Message</h2>
         <div style="background-color: #f8fafc; padding: 20px; border-radius: 6px; border: 1px solid #e2e8f0;">
@@ -167,7 +120,7 @@ const createNotificationEmail = (name: string, email: string, message: string) =
         </div>
       </div>
     </div>
-    
+
     <!-- Footer -->
     <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
       <p style="margin: 0; color: #64748b; font-size: 14px;">Portfolio Contact System</p>
@@ -237,9 +190,9 @@ const createConfirmationEmail = (name: string) => `
                 <tr>
                   <td style="padding: 20px;">
                     <p style="margin: 0 0 10px 0; font-weight: 600; color: #1a1a1a; font-size: 16px;">What happens next?</p>
-                    <p style="margin: 5px 0; line-height: 1.6; font-size: 15px; color: #666;">✓ I'll review your message carefully</p>
-                    <p style="margin: 5px 0; line-height: 1.6; font-size: 15px; color: #666;">✓ You can expect a response within 24-48 hours</p>
-                    <p style="margin: 5px 0; line-height: 1.6; font-size: 15px; color: #666;">✓ I'll reach out to discuss your project or question</p>
+                    <p style="margin: 5px 0; line-height: 1.6; font-size: 15px; color: #666;">&#10003; I'll review your message carefully</p>
+                    <p style="margin: 5px 0; line-height: 1.6; font-size: 15px; color: #666;">&#10003; You can expect a response within 24-48 hours</p>
+                    <p style="margin: 5px 0; line-height: 1.6; font-size: 15px; color: #666;">&#10003; I'll reach out to discuss your project or question</p>
                   </td>
                 </tr>
               </table>
@@ -263,7 +216,7 @@ const createConfirmationEmail = (name: string) => `
                   <td style="padding: 0 10px;">
                     <a href="https://linkedin.com/in/beausterling" class="social-link" style="color: #3DF584; text-decoration: none; font-weight: 500; font-size: 15px;">LinkedIn</a>
                   </td>
-                  <td style="color: #ccc; font-size: 14px;">•</td>
+                  <td style="color: #ccc; font-size: 14px;">&#8226;</td>
                   <td style="padding: 0 10px;">
                     <a href="https://github.com/beausterling" class="social-link" style="color: #3DF584; text-decoration: none; font-weight: 500; font-size: 15px;">GitHub</a>
                   </td>
@@ -285,76 +238,95 @@ const createConfirmationEmail = (name: string) => `
 </html>
 `;
 
-const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: { ...corsHeaders, ...securityHeaders } });
+const handler: Handler = async (event) => {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json',
+  };
+
+  // Handle preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 204, headers, body: '' };
   }
 
-  // Only allow POST requests
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
-    });
+  // Only allow POST
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: 'Method not allowed' }),
+    };
   }
 
   // Get client IP for rate limiting
-  const clientIP = getClientIP(req);
-  console.log("Request from IP:", clientIP.substring(0, 8) + "***");
+  const clientIP = event.headers['x-forwarded-for']?.split(',')[0]?.trim()
+    || event.headers['x-real-ip']
+    || event.headers['client-ip']
+    || 'unknown';
+
+  console.log('Request from IP:', clientIP.substring(0, 8) + '***');
 
   // Check rate limit
   const rateLimitResult = isRateLimited(clientIP);
   if (rateLimitResult.limited) {
-    console.log("Rate limit exceeded for IP:", clientIP.substring(0, 8) + "***");
+    console.log('Rate limit exceeded for IP:', clientIP.substring(0, 8) + '***');
     const resetMinutes = Math.ceil(rateLimitResult.resetIn / 60000);
-    return new Response(
-      JSON.stringify({ 
-        error: "Too many requests. Please try again later.",
-        retryAfterMinutes: resetMinutes 
-      }), 
-      {
-        status: 429,
-        headers: { 
-          "Content-Type": "application/json", 
-          "Retry-After": String(Math.ceil(rateLimitResult.resetIn / 1000)),
-          ...corsHeaders, 
-          ...securityHeaders 
-        },
-      }
-    );
+    return {
+      statusCode: 429,
+      headers: {
+        ...headers,
+        'Retry-After': String(Math.ceil(rateLimitResult.resetIn / 1000)),
+      },
+      body: JSON.stringify({
+        error: 'Too many requests. Please try again later.',
+        retryAfterMinutes: resetMinutes,
+      }),
+    };
   }
 
   try {
-    // Parse and validate request body
-    let requestData;
-    try {
-      requestData = await req.json();
-    } catch {
-      return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
-      });
+    // Parse request body
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Request body is required' }),
+      };
     }
 
-    // Check honeypot field - if filled, silently "succeed" without sending email
+    let requestData;
+    try {
+      requestData = JSON.parse(event.body);
+    } catch {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Invalid JSON in request body' }),
+      };
+    }
+
+    // Check honeypot - silently succeed for bots
     if (requestData.website && requestData.website.trim().length > 0) {
-      console.log("Honeypot triggered - bot submission blocked");
-      // Return success to not reveal the honeypot mechanism
-      return new Response(JSON.stringify({ success: true }), {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
-      });
+      console.log('Honeypot triggered - bot submission blocked');
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true }),
+      };
     }
 
     // Validate input
     const validation = validateContactInput(requestData);
     if (!validation.isValid) {
-      console.log("Validation failed:", validation.errors);
-      return new Response(JSON.stringify({ error: "Invalid input", details: validation.errors }), {
-        status: 400,
-        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
-      });
+      console.log('Validation failed:', validation.errors);
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Invalid input', details: validation.errors }),
+      };
     }
 
     // Sanitize inputs
@@ -362,85 +334,65 @@ const handler = async (req: Request): Promise<Response> => {
     const email = requestData.email.trim().toLowerCase();
     const message = sanitizeContent(requestData.message);
 
-    console.log("Sending contact emails for:", { name, email: email.substring(0, 3) + "***", remainingRequests: rateLimitResult.remaining });
+    console.log('Sending contact emails for:', { name, email: email.substring(0, 3) + '***' });
 
     // Send notification email to Beau
-    console.log("Attempting to send notification email...");
+    console.log('Attempting to send notification email...');
     try {
       const notificationResponse = await resend.emails.send({
-        from: "Portfolio Contact <info@vibecheckit.com>",
-        to: ["beaujsterling@gmail.com"],
+        from: 'Portfolio Contact <info@vibecheckit.com>',
+        to: ['beaujsterling@gmail.com'],
         replyTo: email,
         subject: `New Contact Form Message from ${name}`,
         html: createNotificationEmail(name, email, message),
       });
-      console.log("Notification email sent successfully:", notificationResponse.data?.id || notificationResponse);
+      console.log('Notification email sent successfully:', notificationResponse.data?.id);
     } catch (notificationError: any) {
-      console.error("Failed to send notification email:", notificationError);
-      throw notificationError; // Re-throw to trigger main catch block
+      console.error('Failed to send notification email:', notificationError);
+      throw notificationError;
     }
 
     // Send confirmation email to the user
-    console.log("Attempting to send confirmation email...");
+    console.log('Attempting to send confirmation email...');
     try {
       const confirmationResponse = await resend.emails.send({
-        from: "Beau Sterling <info@vibecheckit.com>",
+        from: 'Beau Sterling <info@vibecheckit.com>',
         to: [email],
-        subject: "Thank you for your message!",
+        subject: 'Thank you for your message!',
         html: createConfirmationEmail(name),
       });
-      console.log("Confirmation email sent successfully:", confirmationResponse.data?.id || confirmationResponse);
+      console.log('Confirmation email sent successfully:', confirmationResponse.data?.id);
     } catch (confirmationError: any) {
-      console.error("Failed to send confirmation email:", confirmationError);
+      console.error('Failed to send confirmation email:', confirmationError);
       // Don't throw - notification was sent successfully
     }
 
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-        ...securityHeaders,
-      },
-    });
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ success: true }),
+    };
   } catch (error: any) {
-    // Log comprehensive error details
-    console.error("Error sending contact emails:", {
+    console.error('Error sending contact emails:', {
       message: error.message,
-      stack: error.stack,
       statusCode: error.statusCode,
-      name: error.name,
     });
 
-    // Check if API key is set
-    const apiKey = Deno.env.get("RESEND_API_KEY");
-    if (!apiKey) {
-      console.error("CRITICAL: RESEND_API_KEY is not set!");
-    } else {
-      console.log("RESEND_API_KEY is set (length:", apiKey.length, ")");
-    }
-
-    // Provide specific error messages based on error type
     let errorMessage = 'Failed to send email. Please try again later.';
-
-    if (error.statusCode === 401 || error.message?.includes('unauthorized')) {
+    if (error.statusCode === 401) {
       errorMessage = 'Email authentication failed.';
-      console.error("CHECK RESEND_API_KEY - appears to be invalid");
-    } else if (error.statusCode === 429 || error.message?.includes('rate limit')) {
+    } else if (error.statusCode === 429) {
       errorMessage = 'Rate limit exceeded. Please try again later.';
-    } else if (error.statusCode === 403 || error.message?.includes('forbidden')) {
+    } else if (error.statusCode === 403) {
       errorMessage = 'Email sending forbidden.';
-      console.error("CHECK SENDER DOMAIN - may need verification");
     }
 
-    return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders, ...securityHeaders },
-      }
-    );
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: errorMessage }),
+    };
   }
 };
 
-serve(handler);
+export { handler };

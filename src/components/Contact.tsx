@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Mail, MessageSquare, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
   const { toast } = useToast();
@@ -22,15 +21,19 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
-        body: formData
+      const response = await fetch('/.netlify/functions/send-contact-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
 
-      if (error) {
+      const data = await response.json();
+
+      if (!response.ok) {
         // Check for rate limiting
-        if (error.message?.includes('429') || error.message?.includes('Too many requests')) {
+        if (response.status === 429) {
           toast({
             title: "Too many requests",
             description: "Please wait a few minutes before sending another message.",
@@ -38,14 +41,14 @@ const Contact = () => {
           });
           return;
         }
-        throw error;
+        throw new Error(data.error || 'Failed to send message');
       }
 
       toast({
         title: "Message sent!",
         description: "Thanks for reaching out. I'll get back to you soon.",
       });
-      
+
       setFormData({ name: '', email: '', message: '', website: '' });
     } catch (error) {
       console.error('Error sending email:', error);
