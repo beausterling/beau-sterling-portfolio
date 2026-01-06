@@ -6,7 +6,7 @@ const Projects = () => {
     {
       title: "ideascower.com",
       description: "A satirical 'anti-incubator' web app that uses AI to humorously critique and deconstruct startup ideas. Featuring a dark cyberpunk aesthetic with custom animations, it generates daily 'doomed' startup concepts and provides entertaining fatal flaw analyses powered by Google Gemini.",
-      image: "/assets/ideascower.png",
+      image: "/assets/ideascower-gif.gif",
       technologies: ["React", "TypeScript", "Vite", "TailwindCSS", "Supabase", "Google Gemini", "Deno"],
       websiteUrl: "https://ideascower.com/",
       githubUrl: "https://github.com/beausterling/ideascower",
