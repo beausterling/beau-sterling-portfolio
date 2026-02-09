@@ -48,12 +48,16 @@ export const CursorEffects = () => {
 
   useEffect(() => {
     const handleMove = (x: number, y: number) => {
-      const newPos = { x, y };
-      setMousePos(newPos);
+      setMousePos({ x, y });
+
+      // Convert viewport coords to canvas-relative coords for drawing
+      const rect = canvasRef.current?.getBoundingClientRect();
+      const cx = rect ? x - rect.left : x;
+      const cy = rect ? y - rect.top : y;
 
       // Add trail point
       if (trailStyle !== 'none') {
-        trailRef.current.push({ x: newPos.x, y: newPos.y, opacity: 1 });
+        trailRef.current.push({ x: cx, y: cy, opacity: 1 });
         if (trailRef.current.length > 20) {
           trailRef.current.shift();
         }
@@ -64,8 +68,8 @@ export const CursorEffects = () => {
         for (let i = 0; i < 2; i++) {
           particlesRef.current.push({
             id: particleIdRef.current++,
-            x: newPos.x + (Math.random() - 0.5) * 20,
-            y: newPos.y + (Math.random() - 0.5) * 20,
+            x: cx + (Math.random() - 0.5) * 20,
+            y: cy + (Math.random() - 0.5) * 20,
             vx: (Math.random() - 0.5) * 2,
             vy: (Math.random() - 0.5) * 2,
             life: 0,
@@ -84,8 +88,8 @@ export const CursorEffects = () => {
         for (let i = 0; i < 3; i++) {
           particlesRef.current.push({
             id: particleIdRef.current++,
-            x: newPos.x + (Math.random() - 0.5) * 10,
-            y: newPos.y + (Math.random() - 0.5) * 10,
+            x: cx + (Math.random() - 0.5) * 10,
+            y: cy + (Math.random() - 0.5) * 10,
             vx: (Math.random() - 0.5) * 4,
             vy: Math.random() * -3 - 1,
             life: 0,
@@ -102,8 +106,8 @@ export const CursorEffects = () => {
       if (trailStyle === 'bubbles' && Math.random() > 0.7) {
         particlesRef.current.push({
           id: particleIdRef.current++,
-          x: newPos.x,
-          y: newPos.y,
+          x: cx,
+          y: cy,
           vy: -2,
           life: 0,
           maxLife: 60,
@@ -129,7 +133,8 @@ export const CursorEffects = () => {
     };
 
     const createClickEffect = (x: number, y: number) => {
-      const clickPos = { x, y };
+      const rect = canvasRef.current?.getBoundingClientRect();
+      const clickPos = { x: rect ? x - rect.left : x, y: rect ? y - rect.top : y };
 
       switch (clickStyle) {
         case 'explosion':

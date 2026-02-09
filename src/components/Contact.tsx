@@ -69,6 +69,11 @@ const Contact = () => {
       
       <div className="container mx-auto px-4 md:px-8 relative z-10">
         <div className="flex flex-col items-center mb-12 text-center">
+          <img
+            src="/assets/beau-profile-gif-loop-sm.gif"
+            alt="Beau Sterling"
+            className="w-28 h-28 md:w-32 md:h-32 rounded-full border-2 border-neon shadow-lg shadow-neon/30 object-cover mb-6"
+          />
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Get In <span className="text-neon text-glow">Touch</span>
           </h2>
