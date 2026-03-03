@@ -63,11 +63,10 @@ const ProjectCard = ({
         // For other videos, show dialog
         setVideoDialogOpen(true);
       }
+    } else if (websiteUrl) {
+      window.open(websiteUrl, '_blank', 'noopener,noreferrer');
     } else if (liveDemoUrl) {
       window.open(liveDemoUrl, '_blank', 'noopener,noreferrer');
-    } else if (websiteUrl) {
-      // Fallback to website if no liveDemoUrl
-      window.open(websiteUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -90,35 +89,46 @@ const ProjectCard = ({
         'flex flex-col md:flex-row gap-8 items-center mb-20',
         reverse && 'md:flex-row-reverse'
       )}>
+        {/* Project Title - shown above image on mobile only */}
+        <div className="w-full md:hidden">
+          <h3 className={cn(
+            "text-2xl font-bold mb-3",
+            reverse ? "text-right" : "text-left"
+          )}>
+            <span className="text-neon text-glow">{title}</span>
+          </h3>
+        </div>
+
         {/* Project Image */}
         <div className="w-full md:w-1/2">
-          <div 
+          <div
             onClick={handleImageClick}
             className="block rounded-lg overflow-hidden border border-gray-800 shadow-xl transition-all duration-500 hover:scale-[1.03] relative group cursor-pointer"
           >
             {/* Neon border effect using pseudo-element - only visible on hover */}
             <div className="absolute inset-0 rounded-lg -m-3 opacity-0 group-hover:opacity-100 shadow-[0_0_40px_15px_rgba(61,245,132,0.9)] border-[12px] border-neon pointer-events-none transition-all duration-500"></div>
-            
+
             {/* Background glow effect - only visible on hover */}
             <div className="absolute inset-0 bg-neon opacity-0 group-hover:opacity-30 transition-all duration-500 blur-2xl"></div>
-            
+
             {/* Additional inner glow effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
               <div className="absolute inset-0 bg-gradient-to-r from-neon/40 to-transparent opacity-70 blur-md"></div>
             </div>
-            
-            <img 
-              src={image} 
-              alt={title} 
+
+            <img
+              src={image}
+              alt={title}
               className="w-full h-auto object-cover rounded-lg relative z-10"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-50"></div>
           </div>
         </div>
-        
+
         {/* Project Details */}
         <div className="w-full md:w-1/2">
-          <h3 className="text-2xl md:text-3xl font-bold mb-3">
+          {/* Title - hidden on mobile (shown above image instead) */}
+          <h3 className="hidden md:block text-3xl font-bold mb-3">
             <span className="text-neon text-glow">{title}</span>
           </h3>
           
@@ -136,7 +146,7 @@ const ProjectCard = ({
               ))}
             </div>
             
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               {liveDemoUrl && (
                 <a 
                   href={liveDemoUrl}

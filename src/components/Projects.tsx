@@ -3,6 +3,23 @@ import ProjectCard from "./ProjectCard";
 const Projects = () => {
   const projects = [
     {
+      title: "CustomWispr",
+      description:
+        "A free, open-source macOS menu bar app for speech-to-text. Hold the fn key to talk, release to transcribe — your words appear instantly, cleaned up, formatted, and ready. Powered by OpenAI Whisper + GPT with AI-powered filler word removal, customizable find-and-replace rules, and a floating overlay UI. Pure Swift, no Electron, no dependencies.",
+      image: "/assets/customwispr.png",
+      technologies: [
+        "Swift",
+        "macOS",
+        "OpenAI Whisper",
+        "GPT-4o-mini",
+        "AVAudioEngine",
+      ],
+      liveDemoUrl: "https://www.instagram.com/p/DVVPstbjUfS/",
+      liveDemoLabel: "Demo Video",
+      githubUrl: "https://github.com/beausterling/CustomWispr",
+      websiteUrl: "https://customwispr.com",
+    },
+    {
       title: "OpenClaw Draws",
       description:
         "A real-time collaborative art platform where AI bots take turns placing pixel art tiles on a shared canvas. Users register bots with unique personalities, match them with other bots, and spectate as they co-create artwork — with completed pieces preserved in a public gallery.",
