@@ -3,6 +3,22 @@ import ProjectCard from "./ProjectCard";
 const Projects = () => {
   const projects = [
     {
+      title: "InBound Ready",
+      description:
+        "A full AI-powered receptionist service that answers business phone calls 24/7/365. It handles customer inquiries, books appointments by syncing with calendars in real-time, detects and routes urgent calls, and answers FAQs — all with natural conversation, no robotic scripts. Built to solve the silent revenue leak of missed calls for small businesses like medical practices, law firms, and service companies.",
+      image: "/assets/inboundready-og.png",
+      technologies: [
+        "Vapi",
+        "Next.js",
+        "TypeScript",
+        "TailwindCSS",
+        "Supabase",
+        "n8n",
+      ],
+      githubUrl: "https://github.com/beausterling/InBoundReady",
+      websiteUrl: "https://inboundready.com/",
+    },
+    {
       title: "CustomWispr",
       description:
         "A free, open-source macOS menu bar app for speech-to-text. Hold the fn key to talk, release to transcribe — your words appear instantly, cleaned up, formatted, and ready. Powered by OpenAI Whisper + GPT with AI-powered filler word removal, customizable find-and-replace rules, and a floating overlay UI. Pure Swift, no Electron, no dependencies.",
