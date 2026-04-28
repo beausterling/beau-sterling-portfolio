@@ -62,6 +62,8 @@ const FilmCard = ({
             <img
               src={image}
               alt={title}
+              loading="lazy"
+              decoding="async"
               className="w-full h-auto object-cover rounded-lg relative z-10"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-50"></div>

@@ -23,13 +23,12 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'Apps', href: '#projects' },
-    { name: 'Films', href: '#films' },
-    { name: 'About', href: '#about' },
-    // { name: 'Blog', href: '/blog' },
+    { name: 'Home', href: '/#home' },
+    { name: 'Apps', href: '/projects' },
+    { name: 'Films', href: '/#films' },
+    { name: 'About', href: '/#about' },
     { name: 'Playground', href: '/playground' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Contact', href: '/#contact' },
   ];
 
   return (

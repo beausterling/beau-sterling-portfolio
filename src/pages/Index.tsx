@@ -1,11 +1,14 @@
-
+import { lazy, Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
-import Films from "@/components/Films";
-import About from "@/components/About";
-import Contact from "@/components/Contact";
-import Footer from "@/components/Footer";
+
+const Films = lazy(() => import("@/components/Films"));
+const About = lazy(() => import("@/components/About"));
+const Contact = lazy(() => import("@/components/Contact"));
+const Footer = lazy(() => import("@/components/Footer"));
+
+const SectionFallback = () => <div className="py-24" />;
 
 const Index = () => {
   return (
@@ -13,12 +16,20 @@ const Index = () => {
       <Navbar />
       <main>
         <Hero />
-        <Projects />
-        <Films />
-        <About />
-        <Contact />
+        <Projects featuredOnly />
+        <Suspense fallback={<SectionFallback />}>
+          <Films />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <About />
+        </Suspense>
+        <Suspense fallback={<SectionFallback />}>
+          <Contact />
+        </Suspense>
       </main>
-      <Footer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };

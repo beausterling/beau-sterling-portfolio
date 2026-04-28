@@ -116,11 +116,26 @@ const ProjectCard = ({
               <div className="absolute inset-0 bg-gradient-to-r from-neon/40 to-transparent opacity-70 blur-md"></div>
             </div>
 
-            <img
-              src={image}
-              alt={title}
-              className="w-full h-auto object-cover rounded-lg relative z-10"
-            />
+            {image.endsWith('.mp4') ? (
+              <video
+                src={image}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                className="w-full h-auto object-cover rounded-lg relative z-10"
+                aria-label={title}
+              />
+            ) : (
+              <img
+                src={image}
+                alt={title}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-auto object-cover rounded-lg relative z-10"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-50"></div>
           </div>
         </div>
