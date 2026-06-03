@@ -13,9 +13,9 @@ const About = () => {
 
   return (
     <section id="about" className="py-24 bg-dark-secondary relative">
-      {/* Background elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-neon/5 blur-[100px] rounded-full" />
-      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-blue-500/5 blur-[80px] rounded-full" />
+      {/* Background elements (pre-baked gradients — no runtime blur) */}
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 glow-neon rounded-full" />
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 glow-blue rounded-full" />
       
       <div className="container mx-auto px-4 md:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

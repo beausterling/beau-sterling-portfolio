@@ -4,12 +4,23 @@ import FilmCard from './FilmCard';
 const Films = () => {
   const films = [
     {
+      title: "Meta Spec Ad",
+      description: "A Meta spec ad for augmented reality headphones — a product that doesn't exist (yet). A speculative concept piece imagining how Meta might market the next leap in wearable audio, brought to life entirely with AI.",
+      image: "/assets/ar-headphones-quixotic.webp",
+      technologies: ["Suno AI", "ElevenLabs", "Magnific", "Veo 3.1", "Kling 3.0"],
+      embedUrl: "https://player.vimeo.com/video/1162367981",
+      watchUrl: "https://vimeo.com/1162367981",
+      watchLabel: "Watch on Vimeo",
+      clientName: "Quixotic Shorts",
+      clientUrl: "https://quixoticshorts.com/",
+    },
+    {
       title: "AI Kid - Movie Trailer",
       description: "A story about an AI Kid who doesn’t fit in at school, then gets a software update and everyone loves him. A commentary on the rapid progression of AI image generation.",
       image: "https://img.youtube.com/vi/gqr2en_76M8/maxresdefault.jpg",
       technologies: ["Freepik", "Veo 3.1", "Suno AI", "ElevenLabs"],
       embedUrl: "https://www.youtube.com/embed/gqr2en_76M8",
-      youtubeUrl: "https://youtu.be/gqr2en_76M8",
+      watchUrl: "https://youtu.be/gqr2en_76M8",
     },
     {
       title: "Liés Ensemble - Short Film",
@@ -17,7 +28,7 @@ const Films = () => {
       image: "https://img.youtube.com/vi/J4i_dJcWq3I/maxresdefault.jpg",
       technologies: ["ElevenLabs", "Suno AI", "Kling AI", "Freepik"],
       embedUrl: "https://www.youtube.com/embed/J4i_dJcWq3I",
-      youtubeUrl: "https://youtube.com/shorts/J4i_dJcWq3I",
+      watchUrl: "https://youtube.com/shorts/J4i_dJcWq3I",
     },
     {
       title: "SmartAss - Spec Ad",
@@ -25,7 +36,7 @@ const Films = () => {
       image: "https://img.youtube.com/vi/nzvg_IbBuho/maxresdefault.jpg",
       technologies: ["Higgsfield", "Veo 3", "ElevenLabs", "Seedream"],
       embedUrl: "https://www.youtube.com/embed/nzvg_IbBuho",
-      youtubeUrl: "https://youtu.be/nzvg_IbBuho",
+      watchUrl: "https://youtu.be/nzvg_IbBuho",
     },
     {
       title: "Happy Egg - Spec Ad",
@@ -33,7 +44,7 @@ const Films = () => {
       image: "https://img.youtube.com/vi/YDNvF-_YCCA/maxresdefault.jpg",
       technologies: ["Kling AI", "ElevenLabs", "After Effects", "Higgsfield"],
       embedUrl: "https://www.youtube.com/embed/YDNvF-_YCCA",
-      youtubeUrl: "https://youtube.com/shorts/YDNvF-_YCCA",
+      watchUrl: "https://youtube.com/shorts/YDNvF-_YCCA",
     },
   ];
 
@@ -54,7 +65,7 @@ const Films = () => {
             <FilmCard
               key={film.title}
               {...film}
-              reverse={index % 2 !== 0}
+              reverse={index % 2 === 0}
             />
           ))}
         </div>

@@ -98,6 +98,12 @@
   .text-glow {
     text-shadow: 0 0 2px rgba(61, 245, 132, 0.4);
   }
+
+  /* Static, paint-once equivalent of the old animate-glow-slow pulse —
+     keeps the headline punchy without a forever-running text-shadow repaint. */
+  .text-glow-strong {
+    text-shadow: 0 0 12px rgba(61, 245, 132, 0.65), 0 0 24px rgba(61, 245, 132, 0.4);
+  }
 }
 
 /* Custom scrollbar */
@@ -122,6 +128,28 @@
 .star-bg {
   background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
   background-size: 30px 30px;
+}
+
+/* Pre-baked glow orbs — replaces expensive runtime blur() filters.
+   A radial-gradient is painted once and costs the GPU nothing on scroll. */
+.glow-neon {
+  background: radial-gradient(circle, rgba(61, 245, 132, 0.07) 0%, transparent 70%);
+}
+
+.glow-blue {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Strudel scope canvas styling */

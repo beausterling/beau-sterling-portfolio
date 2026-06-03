@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ExternalLink, Play } from 'lucide-react';
+import { ExternalLink, Play, Globe } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface FilmCardProps {
@@ -10,7 +10,10 @@ interface FilmCardProps {
   image: string;
   technologies: string[];
   embedUrl: string;
-  youtubeUrl: string;
+  watchUrl: string;
+  watchLabel?: string;
+  clientName?: string;
+  clientUrl?: string;
   reverse?: boolean;
 }
 
@@ -20,7 +23,10 @@ const FilmCard = ({
   image,
   technologies,
   embedUrl,
-  youtubeUrl,
+  watchUrl,
+  watchLabel = "Watch on YouTube",
+  clientName,
+  clientUrl,
   reverse = false,
 }: FilmCardProps) => {
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
@@ -39,7 +45,7 @@ const FilmCard = ({
         <div className="w-full md:w-1/2">
           <div
             onClick={handleImageClick}
-            className="block rounded-lg overflow-hidden border border-gray-800 shadow-xl transition-all duration-500 hover:scale-[1.03] relative group cursor-pointer"
+            className="block rounded-lg overflow-hidden border border-gray-800 shadow-xl transition-transform duration-500 transform-gpu will-change-transform hover:scale-[1.03] relative group cursor-pointer"
           >
             {/* Play button overlay */}
             <div className="absolute inset-0 flex items-center justify-center z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -48,16 +54,8 @@ const FilmCard = ({
               </div>
             </div>
 
-            {/* Neon border effect using pseudo-element - only visible on hover */}
-            <div className="absolute inset-0 rounded-lg -m-3 opacity-0 group-hover:opacity-100 shadow-[0_0_40px_15px_rgba(61,245,132,0.9)] border-[12px] border-neon pointer-events-none transition-all duration-500"></div>
-
-            {/* Background glow effect - only visible on hover */}
-            <div className="absolute inset-0 bg-neon opacity-0 group-hover:opacity-30 transition-all duration-500 blur-2xl"></div>
-
-            {/* Additional inner glow effect */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
-              <div className="absolute inset-0 bg-gradient-to-r from-neon/40 to-transparent opacity-70 blur-md"></div>
-            </div>
+            {/* Single consolidated neon glow - only visible on hover */}
+            <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 shadow-[0_0_25px_8px_rgba(61,245,132,0.7)] border border-neon pointer-events-none transition-opacity duration-500"></div>
 
             <img
               src={image}
@@ -90,16 +88,28 @@ const FilmCard = ({
               ))}
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               <a
-                href={youtubeUrl}
+                href={watchUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-gray-300 hover:text-neon transition-colors"
               >
                 <ExternalLink size={16} />
-                Watch on YouTube
+                {watchLabel}
               </a>
+
+              {clientName && clientUrl && (
+                <a
+                  href={clientUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-gray-300 hover:text-neon transition-colors"
+                >
+                  <Globe size={16} />
+                  {clientName}
+                </a>
+              )}
             </div>
           </div>
         </div>

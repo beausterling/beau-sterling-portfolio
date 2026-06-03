@@ -7,18 +7,20 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Handle scroll effect
+  // Handle scroll effect — passive listener + rAF guard so we touch state
+  // at most once per frame, and never block the scroll thread.
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const offset = window.scrollY;
-      if (offset > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 50);
+        ticking = false;
+      });
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -37,7 +39,7 @@ const Navbar = () => {
         className={cn(
           'fixed top-0 w-full z-50 transition-all duration-300',
           scrolled
-            ? 'py-3 bg-dark/90 backdrop-blur-md shadow-md'
+            ? 'py-3 bg-dark/95 shadow-md'
             : 'py-5 bg-transparent'
         )}
       >

@@ -13,7 +13,7 @@ const ProjectsPage = () => {
       <Navbar />
       <main>
         <section className="pt-32 pb-24 relative">
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-neon/5 blur-[100px]" />
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full glow-neon" />
 
           <div className="container mx-auto px-4 md:px-8 relative z-10">
             <Link

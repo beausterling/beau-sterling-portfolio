@@ -64,8 +64,8 @@ const Contact = () => {
 
   return (
     <section id="contact" className="py-24 relative">
-      {/* Background element */}
-      <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-neon/5 blur-[120px] rounded-full" />
+      {/* Background element (pre-baked gradient — no runtime blur) */}
+      <div className="absolute bottom-0 right-0 w-1/2 h-1/2 glow-neon rounded-full" />
       
       <div className="container mx-auto px-4 md:px-8 relative z-10">
         <div className="flex flex-col items-center mb-12 text-center">

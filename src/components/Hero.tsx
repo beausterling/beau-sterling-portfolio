@@ -4,9 +4,9 @@ const Hero = () => {
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-dark/50 via-dark to-dark" />
       
-      {/* Glowing orb effect */}
-      <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-neon/5 blur-[100px]" />
-      <div className="absolute bottom-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-500/10 blur-[80px]" />
+      {/* Glowing orb effect (pre-baked gradients — no runtime blur) */}
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full glow-neon" />
+      <div className="absolute bottom-1/4 left-1/4 w-64 h-64 rounded-full glow-blue" />
       
       <div className="container mx-auto px-4 md:px-8 relative z-10">
         <div className="max-w-4xl mx-auto">
@@ -15,7 +15,7 @@ const Hero = () => {
           <h1 className="text-4xl md:text-6xl font-bold mb-4 md:mb-6 opacity-0 animate-fade-in" style={{
           animationDelay: '200ms'
         }}>
-            A <span className="text-neon animate-glow-slow">Creative AI Engineer</span>. I Help Startups <span className="text-neon animate-glow-slow">Launch</span> And <span className="text-neon animate-glow-slow">Grow</span> Their Products
+            A <span className="text-neon text-glow-strong">Creative AI Engineer</span>. I Help Startups <span className="text-neon text-glow-strong">Launch</span> And <span className="text-neon text-glow-strong">Grow</span> Their Products
           </h1>
           
           <p className="text-lg md:text-xl text-gray-300 mb-8 opacity-0 animate-fade-in" style={{
