@@ -14,6 +14,18 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: "Moon Rhythms",
+    description:
+      "A wellness application that syncs users' self-care routines with lunar cycles. This app is not fully developed yet, but will take users birth data, generate complete astrological human design profiles, and use that data to inform a highly personalized life coach and relationship advisor. I am submitting this as my honors project for the Nucamp Full Stack Coding Bootcamp 2026.",
+    image: "/assets/moon-rhythms.webp",
+    technologies: ["React Native", "Node.js", "Supabase", "Claude Code"],
+    liveDemoUrl: "https://youtu.be/K0qsH8Vq9w0",
+    liveDemoLabel: "Demo",
+    websiteUrl: "https://moonrhythms.io/",
+    githubUrl: "#",
+    isVideo: true,
+  },
+  {
     title: "InBound Ready",
     description:
       "A full AI-powered receptionist service that answers business phone calls 24/7/365. It handles customer inquiries, books appointments by syncing with calendars in real-time, detects and routes urgent calls, and answers FAQs — all with natural conversation, no robotic scripts. Built to solve the silent revenue leak of missed calls for small businesses like medical practices, law firms, and service companies.",
@@ -161,15 +173,6 @@ export const projects: Project[] = [
     githubUrl: "#",
     isVideo: true,
     embedVideo: true,
-  },
-  {
-    title: "Moon Rhythms",
-    description:
-      "A wellness application that syncs users' self-care routines with lunar cycles. This app is not fully developed yet, but will take users birth data, generate complete astrological human design profiles, and use that data to inform a highly personalized life coach and relationship advisor.",
-    image: "/assets/cb80639d-ec36-4ec6-b58f-0b6ab2fece1e.webp",
-    technologies: ["React Native", "Node.js", "Supabase", "Lovable"],
-    websiteUrl: "https://moonrhythms.io/",
-    githubUrl: "#",
   },
 ];
 
