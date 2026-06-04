@@ -131,13 +131,14 @@
 }
 
 /* Pre-baked glow orbs — replaces expensive runtime blur() filters.
-   A radial-gradient is painted once and costs the GPU nothing on scroll. */
+   closest-side makes each glow transparent at its own boundary, so edge-placed
+   glows do not reveal a clipped rectangular seam on mobile. */
 .glow-neon {
-  background: radial-gradient(circle, rgba(61, 245, 132, 0.07) 0%, transparent 70%);
+  background: radial-gradient(closest-side, rgba(61, 245, 132, 0.09) 0%, rgba(61, 245, 132, 0.045) 42%, transparent 100%);
 }
 
 .glow-blue {
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  background: radial-gradient(closest-side, rgba(59, 130, 246, 0.11) 0%, rgba(59, 130, 246, 0.055) 42%, transparent 100%);
 }
 
 /* Respect users who prefer reduced motion */

@@ -14,11 +14,38 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: "Gumreel",
+    description:
+      "Turn any ecommerce product URL into a research-backed short-form video ad. Gumreel extracts the product's images, brand, and market context, researches long-running winning Meta ads (90+ active days), and builds a structured creative brief — then generates an approval-ready storyboard before producing the final video with Runway and Seedance. Built for the Runway API Hackathon.",
+    image: "/assets/gumreel.webp",
+    technologies: [
+      "Next.js",
+      "React",
+      "Supabase",
+      "Clerk",
+      "Anthropic",
+      "OpenAI",
+      "Runway",
+      "Seedance 2.0",
+      "Stripe",
+    ],
+    liveDemoUrl: "https://youtu.be/qa9cphUV9Cg",
+    liveDemoLabel: "Demo",
+    websiteUrl: "https://gumreel.ai",
+    isVideo: true,
+  },
+  {
     title: "Moon Rhythms",
     description:
-      "A wellness application that syncs users' self-care routines with lunar cycles. This app is not fully developed yet, but will take users birth data, generate complete astrological human design profiles, and use that data to inform a highly personalized life coach and relationship advisor. I am submitting this as my honors project for the Nucamp Full Stack Coding Bootcamp 2026.",
+      "A wellness application that syncs users' self-care routines with lunar cycles. It features real-time moon position and phase tracking, a birth chart calculator powered by the Swiss Ephemeris library for professional-grade astronomical precision, and saved user profiles for personal astrological data. Still in active development, it will take a user's birth data to generate complete astrological and human design profiles, then use that data to power a highly personalized life coach and relationship advisor. I am submitting this as my honors project for the Nucamp Full Stack Coding Bootcamp 2026.",
     image: "/assets/moon-rhythms.webp",
-    technologies: ["React Native", "Node.js", "Supabase", "Claude Code"],
+    technologies: [
+      "Next.js",
+      "React Native",
+      "Supabase",
+      "Swiss Ephemeris",
+      "Claude Code",
+    ],
     liveDemoUrl: "https://youtu.be/K0qsH8Vq9w0",
     liveDemoLabel: "Demo",
     websiteUrl: "https://moonrhythms.io/",
@@ -176,4 +203,4 @@ export const projects: Project[] = [
   },
 ];
 
-export const featuredProjects = projects.slice(0, 3);
+export const featuredProjects = projects.slice(0, 5);

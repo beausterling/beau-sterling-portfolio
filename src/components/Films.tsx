@@ -1,4 +1,5 @@
 
+import { Youtube } from 'lucide-react';
 import FilmCard from './FilmCard';
 
 const Films = () => {
@@ -68,6 +69,18 @@ const Films = () => {
               reverse={index % 2 === 0}
             />
           ))}
+        </div>
+
+        <div className="text-center mt-20">
+          <a
+            href="https://www.youtube.com/@beau_sterling"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 border border-neon text-neon hover:bg-neon/10 transition-all rounded-lg shadow-lg shadow-neon/10"
+          >
+            <Youtube size={18} />
+            Visit my YouTube channel
+          </a>
         </div>
       </div>
     </section>
