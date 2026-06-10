@@ -36,7 +36,7 @@ const Hero = () => {
       </div>
       
       {/* Scroll down indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-8 inset-x-0 flex justify-center animate-bounce">
         <a href="#projects" className="flex flex-col items-center text-gray-400 hover:text-neon">
           <span className="mb-2 text-sm">Scroll</span>
           <ArrowDown size={20} />

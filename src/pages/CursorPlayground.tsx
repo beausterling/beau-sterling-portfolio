@@ -24,7 +24,7 @@ const CursorPlayground = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen bg-black overflow-hidden">
+    <div className="relative w-screen h-dvh bg-black overflow-hidden">
       {/* Header with Back button and Navigation Tabs */}
       <div className="absolute top-0 left-0 right-0 z-50 bg-dark-secondary/90 backdrop-blur-md border-b border-gray-700">
         <div className="container mx-auto px-3 md:px-6 py-3 flex flex-row items-center justify-between gap-3">

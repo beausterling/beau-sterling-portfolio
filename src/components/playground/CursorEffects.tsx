@@ -23,6 +23,7 @@ interface TrailPoint {
 
 export const CursorEffects = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
   const [cursorStyle, setCursorStyle] = useState<'circle' | 'star' | 'heart' | 'ring' | 'glow' | 'emoji'>('circle');
   const [trailStyle, setTrailStyle] = useState<'none' | 'particles' | 'rainbow' | 'bubbles' | 'snake' | 'firework'>('particles');
   const [clickStyle, setClickStyle] = useState<'ripple' | 'explosion' | 'rings' | 'starburst' | 'confetti' | 'fire'>('ripple');
@@ -125,6 +126,8 @@ export const CursorEffects = () => {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      // Let touches that start on the controls panel scroll it normally
+      if (controlsRef.current?.contains(e.target as Node)) return;
       e.preventDefault();
       if (e.touches.length > 0) {
         const touch = e.touches[0];
@@ -257,6 +260,7 @@ export const CursorEffects = () => {
     };
 
     const handleTouchStart = (e: TouchEvent) => {
+      if (controlsRef.current?.contains(e.target as Node)) return;
       if (e.touches.length > 0) {
         const touch = e.touches[0];
         createClickEffect(touch.clientX, touch.clientY);
@@ -477,8 +481,8 @@ export const CursorEffects = () => {
   };
 
   return (
-    <div className="relative w-full h-full bg-black overflow-hidden md:cursor-none touch-none">
-      <canvas ref={canvasRef} className="absolute inset-0" />
+    <div className="relative w-full h-full bg-black overflow-hidden md:cursor-none">
+      <canvas ref={canvasRef} className="absolute inset-0 touch-none" />
 
       {/* Custom cursor - hidden on mobile */}
       <div className="hidden md:block">
@@ -486,7 +490,7 @@ export const CursorEffects = () => {
       </div>
 
       {/* Controls */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-40 bg-dark-secondary/90 backdrop-blur-md p-3 md:p-6 rounded-lg border border-gray-700 max-w-4xl w-full mx-2 md:mx-4 md:bottom-4 cursor-auto max-h-[40vh] overflow-y-auto">
+      <div ref={controlsRef} className="absolute bottom-2 left-1/2 -translate-x-1/2 z-40 bg-dark-secondary/90 backdrop-blur-md p-3 md:p-6 rounded-lg border border-gray-700 max-w-4xl w-full mx-2 md:mx-4 md:bottom-4 cursor-auto max-h-[45dvh] overflow-y-auto overscroll-contain touch-pan-y">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
           {/* Cursor Style - Hidden on mobile */}
           <div className="hidden md:block">
