@@ -35,6 +35,26 @@ export const projects: Project[] = [
     isVideo: true,
   },
   {
+    title: "ShopWell - Chrome Extension",
+    description:
+      "A free Chrome extension that helps people with chronic conditions shop safely online by using on-device AI to analyze product ingredients, allergens, and materials on Amazon and Walmart. Built for the chronic illness community, it provides condition-aware analysis for POTS, ME/CFS, and Celiac Disease while scanning for nine major allergens—all with guaranteed privacy since processing happens locally on your device.",
+    image: "/assets/shop-well.webp",
+    technologies: [
+      "Chrome-AI",
+      "JavaScript",
+      "Node.js",
+      "Google Cloud Functions",
+      "Google Sheets API",
+      "esbuild",
+      "Netlify",
+    ],
+    liveDemoUrl: "https://youtu.be/7qUNzIpvn9U?si=l88PY6CmemLe3m_V",
+    githubUrl: "https://github.com/beausterling/shop-well-extension",
+    websiteUrl: "https://shopwell-extension.com/",
+    hackathonUrl: "https://devpost.com/software/shop-well",
+    isVideo: true,
+  },
+  {
     title: "Moon Rhythms",
     description:
       "A wellness application that syncs users' self-care routines with lunar cycles. It features real-time moon position and phase tracking, a birth chart calculator powered by the Swiss Ephemeris library for professional-grade astronomical precision, and saved user profiles for personal astrological data. Still in active development, it will take a user's birth data to generate complete astrological and human design profiles, then use that data to power a highly personalized life coach and relationship advisor. I am submitting this as my honors project for the Nucamp Full Stack Coding Bootcamp 2026.",
@@ -67,6 +87,24 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/beausterling/InBoundReady",
     websiteUrl: "https://inboundready.com/",
+  },
+  {
+    title: "VibeCheck-It",
+    description:
+      "A messaging analysis platform, that helps users understand their communication patterns and improve digital relationships across different channels. It includes a free demo on the home page and paid reports. The next phase will be a MacOS desktop app that integrates with iMessage and other messaging platforms.",
+    image: "/assets/3b170fdd-53d9-4427-ae77-525fda6f775b.webp",
+    technologies: [
+      "Vite",
+      "TypeScript",
+      "React",
+      "TailwindCSS",
+      "OpenAI",
+      "Supabase",
+    ],
+    liveDemoUrl: "https://www.youtube.com/watch?v=EDiJC-QUxVc&t=137",
+    websiteUrl: "https://vibecheckit.com/",
+    githubUrl: "#",
+    isVideo: true,
   },
   {
     title: "CustomWispr",
@@ -122,26 +160,6 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/beausterling/ideascower",
   },
   {
-    title: "ShopWell - Chrome Extension",
-    description:
-      "A free Chrome extension that helps people with chronic conditions shop safely online by using on-device AI to analyze product ingredients, allergens, and materials on Amazon and Walmart. Built for the chronic illness community, it provides condition-aware analysis for POTS, ME/CFS, and Celiac Disease while scanning for nine major allergens—all with guaranteed privacy since processing happens locally on your device.",
-    image: "/assets/shop-well.webp",
-    technologies: [
-      "Chrome-AI",
-      "JavaScript",
-      "Node.js",
-      "Google Cloud Functions",
-      "Google Sheets API",
-      "esbuild",
-      "Netlify",
-    ],
-    liveDemoUrl: "https://youtu.be/7qUNzIpvn9U?si=l88PY6CmemLe3m_V",
-    githubUrl: "https://github.com/beausterling/shop-well-extension",
-    websiteUrl: "https://shopwell-extension.com/",
-    hackathonUrl: "https://devpost.com/software/shop-well",
-    isVideo: true,
-  },
-  {
     title: "MyFutrSelf",
     description:
       "An AI Accountability app that allows users to talk to their future self who is designed to keep them accountable to their goals. The app creates personalized conversations with your future self to help maintain motivation and track progress towards your aspirations.",
@@ -161,24 +179,6 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/beausterling/myfutrself-newest",
     websiteUrl: "https://myfutrself.com/",
     hackathonUrl: "https://devpost.com/software/myfutrself",
-    isVideo: true,
-  },
-  {
-    title: "VibeCheck-It",
-    description:
-      "A messaging analysis platform, that helps users understand their communication patterns and improve digital relationships across different channels. It includes a free demo on the home page and paid reports. The next phase will be a MacOS desktop app that integrates with iMessage and other messaging platforms.",
-    image: "/assets/3b170fdd-53d9-4427-ae77-525fda6f775b.webp",
-    technologies: [
-      "Vite",
-      "TypeScript",
-      "React",
-      "TailwindCSS",
-      "OpenAI",
-      "Supabase",
-    ],
-    liveDemoUrl: "https://www.youtube.com/watch?v=EDiJC-QUxVc&t=137",
-    websiteUrl: "https://vibecheckit.com/",
-    githubUrl: "#",
     isVideo: true,
   },
   {
