@@ -9,7 +9,7 @@ const Footer = lazy(() => import("@/components/Footer"));
 
 const ProjectsPage = () => {
   return (
-    <div className="min-h-screen bg-dark text-white">
+    <div className="min-h-screen text-white">
       <Navbar />
       <main>
         <section className="pt-32 pb-24 relative">
