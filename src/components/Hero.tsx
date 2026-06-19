@@ -1,8 +1,8 @@
 import { ArrowDown } from 'lucide-react';
 const Hero = () => {
-  return <section id="home" className="min-h-screen flex flex-col justify-center relative star-bg overflow-hidden">
+  return <section id="home" className="min-h-screen flex flex-col justify-center relative overflow-hidden">
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-dark/50 via-dark to-dark" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-dark" />
       
       {/* Glowing orb effect (pre-baked gradients — no runtime blur) */}
       <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full glow-neon" />

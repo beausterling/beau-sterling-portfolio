@@ -12,7 +12,7 @@ const SectionFallback = () => <div className="py-24" />;
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-dark text-white">
+    <div className="min-h-screen text-white">
       <Navbar />
       <main>
         <Hero />

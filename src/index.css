@@ -95,6 +95,21 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
+  /* Subtle light-gray grid backdrop, faded out toward the edges */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.10) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(circle 70vmin at 50% 45%, #000 0%, rgba(0, 0, 0, 0.5) 55%, transparent 100%);
+    mask-image: radial-gradient(circle 70vmin at 50% 45%, #000 0%, rgba(0, 0, 0, 0.5) 55%, transparent 100%);
+  }
+
   .text-glow {
     text-shadow: 0 0 2px rgba(61, 245, 132, 0.4);
   }

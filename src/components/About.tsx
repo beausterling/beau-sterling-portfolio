@@ -12,7 +12,7 @@ const About = () => {
   ];
 
   return (
-    <section id="about" className="py-24 bg-dark-secondary relative">
+    <section id="about" className="py-24 bg-gradient-to-b from-transparent via-dark-secondary/30 to-transparent relative">
       {/* Background elements (pre-baked gradients — no runtime blur) */}
       <div className="absolute top-0 right-0 w-1/3 h-1/3 glow-neon rounded-full" />
       <div className="absolute bottom-0 left-0 w-1/4 h-1/4 glow-blue rounded-full" />

@@ -130,114 +130,6 @@ const createNotificationEmail = (name: string, email: string, message: string) =
 </html>
 `;
 
-// Confirmation email template for the user
-const createConfirmationEmail = (name: string) => `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="color-scheme" content="light dark">
-  <meta name="supported-color-schemes" content="light dark">
-  <title>Thank You - Beau Sterling</title>
-  <style>
-    @media (prefers-color-scheme: dark) {
-      .email-body { background-color: #0a0a0a !important; }
-      .email-container { background-color: #1a1a1a !important; border-color: #333333 !important; }
-      .email-text { color: #e5e5e5 !important; }
-      .email-text-muted { color: #a1a1aa !important; }
-      .email-header { background-color: #1a1a1a !important; border-bottom-color: #3DF584 !important; }
-      .email-footer { background-color: #0a0a0a !important; border-top-color: #333333 !important; }
-      .info-box { background-color: rgba(61, 245, 132, 0.1) !important; border-left-color: #3DF584 !important; }
-      .social-link { color: #3DF584 !important; }
-    }
-    @media only screen and (max-width: 480px) {
-      .email-container { width: 100% !important; }
-      .email-header { padding: 30px 20px !important; }
-      .email-content { padding: 20px !important; }
-      .email-footer { padding: 20px !important; }
-    }
-  </style>
-</head>
-<body class="email-body" style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse;">
-    <tr>
-      <td style="padding: 20px 0;">
-        <table class="email-container" role="presentation" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e5e5; border-collapse: collapse;">
-
-          <!-- Header -->
-          <tr>
-            <td class="email-header" style="background-color: #ffffff; border-bottom: 3px solid #3DF584; padding: 40px 30px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #1a1a1a; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Thank You!</h1>
-              <p style="margin: 10px 0 0 0; font-size: 16px; color: #666;">Message Received Successfully</p>
-            </td>
-          </tr>
-
-          <!-- Content -->
-          <tr>
-            <td class="email-content" style="padding: 30px;">
-              <!-- Greeting -->
-              <h2 class="email-text" style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600; color: #1a1a1a; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Hi ${name},</h2>
-
-              <!-- Message -->
-              <p class="email-text" style="margin: 0 0 20px 0; line-height: 1.6; font-size: 16px; color: #333;">
-                Thank you for reaching out! I've received your message and will get back to you as soon as possible.
-              </p>
-
-              <!-- Info box -->
-              <table class="info-box" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: rgba(61, 245, 132, 0.05); border-left: 4px solid #3DF584; margin: 20px 0; border-collapse: collapse;">
-                <tr>
-                  <td style="padding: 20px;">
-                    <p style="margin: 0 0 10px 0; font-weight: 600; color: #1a1a1a; font-size: 16px;">What happens next?</p>
-                    <p style="margin: 5px 0; line-height: 1.6; font-size: 15px; color: #666;">&#10003; I'll review your message carefully</p>
-                    <p style="margin: 5px 0; line-height: 1.6; font-size: 15px; color: #666;">&#10003; You can expect a response within 24-48 hours</p>
-                    <p style="margin: 5px 0; line-height: 1.6; font-size: 15px; color: #666;">&#10003; I'll reach out to discuss your project or question</p>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Signature -->
-              <p class="email-text" style="margin: 20px 0 0 0; line-height: 1.6; color: #333;">
-                Best regards,<br>
-                <strong style="color: #1a1a1a;">Beau Sterling</strong><br>
-                <span class="email-text-muted" style="color: #666;">Creative AI Engineer & Full-Stack Developer</span>
-              </p>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td class="email-footer" style="background-color: #f5f5f5; border-top: 1px solid #e5e5e5; padding: 30px; text-align: center;">
-              <!-- Social links -->
-              <p style="margin: 0 0 15px 0; font-size: 14px; color: #666;">Connect with me:</p>
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto; border-collapse: collapse;">
-                <tr>
-                  <td style="padding: 0 10px;">
-                    <a href="https://linkedin.com/in/beausterling" class="social-link" style="color: #3DF584; text-decoration: none; font-weight: 500; font-size: 15px;">LinkedIn</a>
-                  </td>
-                  <td style="color: #ccc; font-size: 14px;">&#8226;</td>
-                  <td style="padding: 0 10px;">
-                    <a href="https://github.com/beausterling" class="social-link" style="color: #3DF584; text-decoration: none; font-weight: 500; font-size: 15px;">GitHub</a>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Disclaimer -->
-              <p style="margin: 20px 0 0 0; font-size: 12px; color: #999;">
-                This is an automated confirmation. Please do not reply to this email.
-              </p>
-            </td>
-          </tr>
-
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-`;
-
 const handler: Handler = async (event) => {
   // CORS headers
   const headers = {
@@ -340,7 +232,7 @@ const handler: Handler = async (event) => {
     console.log('Attempting to send notification email...');
     try {
       const notificationResponse = await resend.emails.send({
-        from: 'Portfolio Contact <info@vibecheckit.com>',
+        from: 'Portfolio Contact <contact@mail.moonrhythms.io>',
         to: ['beaujsterling@gmail.com'],
         replyTo: email,
         subject: `New Contact Form Message from ${name}`,
@@ -350,21 +242,6 @@ const handler: Handler = async (event) => {
     } catch (notificationError: any) {
       console.error('Failed to send notification email:', notificationError);
       throw notificationError;
-    }
-
-    // Send confirmation email to the user
-    console.log('Attempting to send confirmation email...');
-    try {
-      const confirmationResponse = await resend.emails.send({
-        from: 'Beau Sterling <info@vibecheckit.com>',
-        to: [email],
-        subject: 'Thank you for your message!',
-        html: createConfirmationEmail(name),
-      });
-      console.log('Confirmation email sent successfully:', confirmationResponse.data?.id);
-    } catch (confirmationError: any) {
-      console.error('Failed to send confirmation email:', confirmationError);
-      // Don't throw - notification was sent successfully
     }
 
     return {
