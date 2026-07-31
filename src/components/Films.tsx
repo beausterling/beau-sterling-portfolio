@@ -5,9 +5,17 @@ import FilmCard from './FilmCard';
 const Films = () => {
   const films = [
     {
+      title: "Derailed - Joyce Manor (Music Video)",
+      description: "An AI-generated music video for Joyce Manor's \"Derailed\" — a visual interpretation of the track built shot by shot with generative video tools.",
+      image: "https://img.youtube.com/vi/0PrX7e80ZpA/maxresdefault.jpg",
+      technologies: ["Seedance 2.0", "Claude", "FFmpeg", "Nano Banana 2", "Premiere Pro"],
+      embedUrl: "https://www.youtube.com/embed/0PrX7e80ZpA",
+      watchUrl: "https://youtu.be/0PrX7e80ZpA",
+    },
+    {
       title: "Meta Spec Ad",
       description: "A Meta spec ad for augmented reality headphones — a product that doesn't exist (yet). A speculative concept piece imagining how Meta might market the next leap in wearable audio, brought to life entirely with AI.",
-      image: "/assets/ar-headphones-quixotic.webp",
+      image: "/assets/meta-spec-ad-sidewalk.webp",
       technologies: ["Suno AI", "ElevenLabs", "Magnific", "Veo 3.1", "Kling 3.0"],
       embedUrl: "https://player.vimeo.com/video/1162367981",
       watchUrl: "https://vimeo.com/1162367981",
