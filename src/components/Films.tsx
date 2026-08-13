@@ -5,6 +5,17 @@ import FilmCard from './FilmCard';
 const Films = () => {
   const films = [
     {
+      title: "The Wetlands Conservancy - Spec Ad",
+      description: "A spec ad for The Wetlands Conservancy in Oregon, celebrating the state's wetlands and the work of protecting them. Generated shot by shot with the Magnific MCP driven from Claude Cowork, then scored, graded, and cut into a finished piece.",
+      image: "/assets/wetlands-conservancy-spec-ad.webp",
+      technologies: ["Magnific MCP", "Claude Cowork", "Seedance 2.0", "Suno AI", "Topaz", "Premiere Pro"],
+      embedUrl: "https://player.vimeo.com/video/1217060889",
+      watchUrl: "https://vimeo.com/1217060889",
+      watchLabel: "Watch on Vimeo",
+      clientName: "Quixotic Shorts",
+      clientUrl: "https://quixoticshorts.com/",
+    },
+    {
       title: "Derailed - Joyce Manor (Music Video)",
       description: "An AI-generated music video for Joyce Manor's \"Derailed\" — a visual interpretation of the track built shot by shot with generative video tools.",
       image: "https://img.youtube.com/vi/0PrX7e80ZpA/maxresdefault.jpg",

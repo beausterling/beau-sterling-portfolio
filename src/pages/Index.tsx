@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
+import useHashScroll from "@/hooks/useHashScroll";
 
 const Films = lazy(() => import("@/components/Films"));
 const About = lazy(() => import("@/components/About"));
@@ -11,6 +12,8 @@ const Footer = lazy(() => import("@/components/Footer"));
 const SectionFallback = () => <div className="py-24" />;
 
 const Index = () => {
+  useHashScroll();
+
   return (
     <div className="min-h-screen text-white">
       <Navbar />
