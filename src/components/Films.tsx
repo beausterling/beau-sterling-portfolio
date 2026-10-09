@@ -5,6 +5,17 @@ import FilmCard from './FilmCard';
 const Films = () => {
   const films = [
     {
+      title: "GenHQ - Spec Ad",
+      description: "A spec ad for GenHQ, the creative AI education community. A man wakes to a podcast declaring human creativity dead, steps outside, and is struck by lightning into a handmade paper world, until a stranger hands him a Super 8 camera. The film argues that AI filmmaking is a craft: the AI world is built as dimensional papercraft, and the answer to the panic is the most analog camera there is.",
+      image: "/assets/genhq-spec-ad.webp",
+      technologies: ["Seedance 2.5", "Higgsfield", "Magnific", "ElevenLabs", "Suno AI", "Premiere Pro"],
+      embedUrl: "https://player.vimeo.com/video/1231162092",
+      watchUrl: "https://vimeo.com/1231162092",
+      watchLabel: "Watch on Vimeo",
+      clientName: "Quixotic Shorts",
+      clientUrl: "https://quixoticshorts.com/",
+    },
+    {
       title: "The Wetlands Conservancy - Spec Ad",
       description: "A spec ad for The Wetlands Conservancy in Oregon, celebrating the state's wetlands and the work of protecting them. Generated shot by shot with the Magnific MCP driven from Claude Cowork, then scored, graded, and cut into a finished piece.",
       image: "/assets/wetlands-conservancy-spec-ad.webp",

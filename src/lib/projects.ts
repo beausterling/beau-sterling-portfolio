@@ -14,6 +14,21 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: "YT Clip - Chrome Extension",
+    description:
+      "A free, open-source Chrome extension that adds a Download / Clip button under any YouTube video. Save the full audio or video, or cut a frame-accurate clip between two timestamps, and the file lands in your Downloads folder. I built it to pull sound effects from YouTube for my own video edits, and when I shared it on Instagram the post passed 60,000 views. Under the hood, a zero-dependency Node server wraps yt-dlp and FFmpeg, works through four download strategies cheapest first, remembers which one succeeded, and shows live progress, speed, and a countdown instead of a spinner.",
+    image: "/assets/yt-clip.webp",
+    technologies: [
+      "JavaScript",
+      "Chrome Extension (MV3)",
+      "Node.js",
+      "yt-dlp",
+      "FFmpeg",
+      "launchd",
+    ],
+    githubUrl: "https://github.com/beausterling/yt-clip",
+  },
+  {
     title: "Gumreel",
     description:
       "Turn any ecommerce product URL into a research-backed short-form video ad. Gumreel extracts the product's images, brand, and market context, researches long-running winning Meta ads (90+ active days), and builds a structured creative brief — then generates an approval-ready storyboard before producing the final video with Runway and Seedance. Built for the Runway API Hackathon.",

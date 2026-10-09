@@ -67,6 +67,8 @@ const ProjectCard = ({
       window.open(websiteUrl, '_blank', 'noopener,noreferrer');
     } else if (liveDemoUrl) {
       window.open(liveDemoUrl, '_blank', 'noopener,noreferrer');
+    } else if (githubUrl && githubUrl !== '#') {
+      window.open(githubUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
