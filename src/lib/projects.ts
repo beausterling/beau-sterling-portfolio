@@ -7,6 +7,7 @@ export interface Project {
   liveDemoLabel?: string;
   githubUrl?: string;
   websiteUrl?: string;
+  websiteLabel?: string;
   hackathonUrl?: string;
   isVideo?: boolean;
   embedVideo?: boolean;
@@ -27,25 +28,28 @@ export const projects: Project[] = [
       "launchd",
     ],
     githubUrl: "https://github.com/beausterling/yt-clip",
+    websiteUrl: "https://beausterling.gumroad.com/l/ytclip",
+    websiteLabel: "Get it on Gumroad",
   },
   {
     title: "Gumreel",
     description:
-      "Turn any ecommerce product URL into a research-backed short-form video ad. Gumreel extracts the product's images, brand, and market context, researches long-running winning Meta ads (90+ active days), and builds a structured creative brief — then generates an approval-ready storyboard before producing the final video with Runway and Seedance. Built for the Runway API Hackathon.",
+      "An AI video toolkit and creative generation platform, live with paid plans. Gumfield puts 26 image and video models from OpenAI, Google, ByteDance, Kuaishou, Alibaba, xAI and more behind one interface, with per-model settings, a drag-and-drop reference tray, in-browser video trimming, and a gallery. Product Ad turns any product URL into a research-backed video ad, Clip Stitch repairs the seams between chained AI clips so they play as one continuous shot, and Datamorph is a real-time WebGL effects editor. I designed and built the whole platform solo, including a credit system that reserves credits on submit and refunds them automatically when a generation fails.",
     image: "/assets/gumreel.webp",
     technologies: [
       "Next.js",
       "React",
       "Supabase",
       "Clerk",
-      "Anthropic",
-      "OpenAI",
-      "Runway",
-      "Seedance 2.0",
       "Stripe",
+      "OpenAI",
+      "Anthropic",
+      "Seedance",
+      "Kling",
+      "WebGL",
     ],
     liveDemoUrl: "https://youtu.be/qa9cphUV9Cg",
-    liveDemoLabel: "Live Demo",
+    liveDemoLabel: "Product Ad Demo",
     websiteUrl: "https://gumreel.ai",
     isVideo: true,
   },

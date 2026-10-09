@@ -13,6 +13,7 @@ interface ProjectCardProps {
   liveDemoLabel?: string;
   githubUrl?: string;
   websiteUrl?: string;
+  websiteLabel?: string;
   hackathonUrl?: string;
   reverse?: boolean;
   isVideo?: boolean;
@@ -28,6 +29,7 @@ const ProjectCard = ({
   liveDemoLabel = "Live Demo",
   githubUrl,
   websiteUrl,
+  websiteLabel = "Website",
   hackathonUrl,
   reverse = false,
   isVideo = false,
@@ -189,7 +191,7 @@ const ProjectCard = ({
                   className="flex items-center gap-2 text-sm text-gray-300 hover:text-neon transition-colors"
                 >
                   <Globe size={16} />
-                  Website
+                  {websiteLabel}
                 </a>
               )}
 
