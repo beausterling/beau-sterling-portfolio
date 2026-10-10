@@ -15,12 +15,11 @@ const Projects = ({ featuredOnly = false }: ProjectsProps) => {
       <div className="container mx-auto px-4 md:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Featured <span className="text-neon text-glow">Projects</span>
+            Featured <span className="text-neon text-glow">Products</span>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Here are some of my recent projects that showcase my skills in
-            frontend development, UI/UX design, and building applications that
-            solve real problems.
+            A few things I've designed and built end to end, from AI video tools
+            to browser extensions, a macOS app, and voice agents.
           </p>
         </div>
 
@@ -40,7 +39,7 @@ const Projects = ({ featuredOnly = false }: ProjectsProps) => {
               to="/projects"
               className="inline-flex items-center gap-2 px-6 py-3 border border-neon text-neon hover:bg-neon/10 transition-all rounded-lg shadow-lg shadow-neon/10"
             >
-              See all {projects.length} projects
+              See all {projects.length} products
               <ArrowRight size={18} />
             </Link>
           </div>

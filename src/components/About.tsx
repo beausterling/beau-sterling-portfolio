@@ -1,5 +1,5 @@
 
-import { Code, Cpu, Layers, LineChart, LayoutGrid, Rocket } from 'lucide-react';
+import { Clapperboard, Code, Cpu, Layers, LayoutGrid, Rocket } from 'lucide-react';
 
 const About = () => {
   const skills = [
@@ -7,7 +7,7 @@ const About = () => {
     { name: "UI/UX Design", icon: <LayoutGrid className="text-neon" size={24} /> },
     { name: "Automation Workflows", icon: <Layers className="text-neon" size={24} /> },
     { name: "AI Integration", icon: <Cpu className="text-neon" size={24} /> },
-    { name: "Data Visualization", icon: <LineChart className="text-neon" size={24} /> },
+    { name: "AI Filmmaking", icon: <Clapperboard className="text-neon" size={24} /> },
     { name: "MVP Scope & Launch", icon: <Rocket className="text-neon" size={24} /> },
   ];
 
@@ -27,15 +27,15 @@ const About = () => {
             
             <div className="space-y-4 text-gray-300">
               <p>
-                I'm Beau Sterling, a passionate frontend developer and app builder dedicated to creating exceptional digital experiences that help startups and small businesses achieve their goals.
+                I'm Beau Sterling, a design engineer and AI filmmaker in Seattle. I design and build whole products on my own, from the interaction model and interface to the code underneath, and I make short films and spec ads with generative AI.
               </p>
               
               <p>
-                With a deep understanding of modern web technologies and UI/UX principles, I specialize in building responsive, performant, and visually appealing applications that users love to interact with.
+                I studied filmmaking at the University of Washington (DXARTS), and that training shows up in everything I make. As a Junior Creative Partner at Quixotic Shorts, I take one portfolio piece a month from concept to final cut, generating it shot by shot with tools like Seedance, Kling, Veo, Magnific, ElevenLabs, and Suno, then scoring, grading, and editing it in Premiere. Recent work includes spec ads for GenHQ, The Wetlands Conservancy, and Meta.
               </p>
               
               <p>
-                My approach combines technical expertise with business understanding, allowing me to develop solutions that not only look great but also drive real results for my clients.
+                The two sides feed each other. I build the tools I wish I had in the edit, like Gumreel, an AI video toolkit with paid plans, and YT Clip, which I made to pull sound effects for my own projects. And because I live inside a creative workflow every day, I know what the people using my software actually need.
               </p>
             </div>
           </div>

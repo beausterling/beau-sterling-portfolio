@@ -26,7 +26,7 @@ const ProjectsPage = () => {
 
             <div className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                All <span className="text-neon text-glow">Projects</span>
+                All <span className="text-neon text-glow">Products</span>
               </h1>
               <p className="text-gray-400 max-w-2xl mx-auto">
                 A complete look at the products, prototypes, and experiments
