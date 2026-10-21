@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 
 const Projects = lazy(() => import("./pages/Projects"));
+const Design = lazy(() => import("./pages/Design"));
 const CursorPlayground = lazy(() => import("./pages/CursorPlayground"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -22,6 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/design" element={<Design />} />
             <Route path="/playground" element={<CursorPlayground />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
