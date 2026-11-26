@@ -9,7 +9,8 @@ interface FilmCardProps {
   description: string;
   image: string;
   technologies: string[];
-  embedUrl: string;
+  embedUrl?: string;
+  videoSrc?: string;
   watchUrl: string;
   watchLabel?: string;
   clientName?: string;
@@ -23,6 +24,7 @@ const FilmCard = ({
   image,
   technologies,
   embedUrl,
+  videoSrc,
   watchUrl,
   watchLabel = "Watch on YouTube",
   clientName,
@@ -119,13 +121,24 @@ const FilmCard = ({
       <Dialog open={videoDialogOpen} onOpenChange={setVideoDialogOpen}>
         <DialogContent className="max-w-4xl bg-dark-secondary border-gray-800">
           <div className="aspect-video w-full">
-            <iframe
-              src={embedUrl}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="w-full h-full"
-            ></iframe>
+            {videoSrc ? (
+              <video
+                src={videoSrc}
+                poster={image}
+                controls
+                autoPlay
+                playsInline
+                className="w-full h-full bg-black"
+              />
+            ) : (
+              <iframe
+                src={embedUrl}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
+            )}
           </div>
         </DialogContent>
       </Dialog>

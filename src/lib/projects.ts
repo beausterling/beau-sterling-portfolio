@@ -15,6 +15,40 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: "Splainer",
+    description:
+      "An AI explainer video studio, live with paid plans. Splainer writes, voices and animates a 15 to 60 second explainer for any business, in an animation style designed only for that brand, with no footage, editor or agency. Every customer gets their own design system instead of a shared template, and every video can render in both vertical (for TikTok, Reels, Shorts, X and LinkedIn) and wide (for websites and YouTube), with each scene laid out per format rather than cropped. Text stays inside a safe zone I measured across all five vertical platforms. I built it solo for the $100K Ship or Die hackathon, where the winner is ranked on verified profit.",
+    image: "/assets/splainer.webp",
+    technologies: [
+      "Next.js",
+      "React",
+      "Claude",
+      "HyperFrames",
+      "GSAP",
+      "ElevenLabs",
+      "Modal",
+      "Stripe",
+      "Vercel",
+    ],
+    websiteUrl: "https://splainer.video",
+  },
+  {
+    title: "drip - AI Water Usage Meter",
+    description:
+      "A free, open-source tool that estimates how much water your AI coding agent uses, live in your terminal. drip reads Claude Code and Codex CLI's local logs for real token counts, converts them to energy and then to water with low, mid and high estimates, and cites the published research behind every coefficient. It shows up in the Claude Code status line, as a split-pane meter (a filling bottle in a tall pane), or as a browser breakdown with the math step by step, 30 days of history and a shareable stats card. Everything stays on your machine: no accounts, no telemetry, and no dependencies beyond Python's standard library.",
+    image: "/assets/drip.webp",
+    technologies: [
+      "Python",
+      "SQLite",
+      "Claude Code",
+      "Codex CLI",
+      "iTerm2",
+      "Ghostty",
+      "tmux",
+    ],
+    githubUrl: "https://github.com/beausterling/drip-ai-water-usage",
+  },
+  {
     title: "YT Clip - Chrome Extension",
     description:
       "A free, open-source Chrome extension that adds a Download / Clip button under any YouTube video. Save the full audio or video, or cut a frame-accurate clip between two timestamps, and the file lands in your Downloads folder. I built it to pull sound effects from YouTube for my own video edits, and when I shared it on Instagram the post passed 60,000 views. Under the hood, a zero-dependency Node server wraps yt-dlp and FFmpeg, works through four download strategies cheapest first, remembers which one succeeded, and shows live progress, speed, and a countdown instead of a spinner.",

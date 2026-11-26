@@ -5,6 +5,15 @@ import FilmCard from './FilmCard';
 const Films = () => {
   const films = [
     {
+      title: "PlanetScale Neki - Spec Ad",
+      description: "A spec ad for Neki, PlanetScale's new sharded Postgres, inspired by the wrapped yellow bus they ran through San Francisco. Commuters pack onto a bus promising \"room for all your users\" until it's so full it splits into four. I blocked every shot in Blender first and locked the timing to the voiceover, made one photoreal reference still per beat, then drove each clip from those references and cut it over 71 versions.",
+      image: "/assets/planetscale-neki-spec-ad.webp",
+      technologies: ["Blender", "Seedance 2.5", "Magnific", "GPT Image", "ElevenLabs", "Premiere Pro"],
+      videoSrc: "/assets/planetscale-neki-spec-ad.mp4",
+      watchUrl: "https://x.com/beausterling_/status/2126008330539913346",
+      watchLabel: "Watch on X",
+    },
+    {
       title: "GenHQ - Spec Ad",
       description: "A spec ad for GenHQ, the creative AI education community. A man wakes to a podcast declaring human creativity dead, steps outside, and is struck by lightning into a handmade paper world, until a stranger hands him a Super 8 camera. The film argues that AI filmmaking is a craft: the AI world is built as dimensional papercraft, and the answer to the panic is the most analog camera there is.",
       image: "/assets/genhq-spec-ad.webp",
